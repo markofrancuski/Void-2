@@ -5,7 +5,7 @@ using Pixelplacement;
 using MEC;
 
 //State Machine
-public enum PlayerState { IDLE, MOVING, DEAD };
+public enum PlayerState { IDLE, MOVING, DEAD, INTERACTING };
 
 public class PlayerController : MonoBehaviour
 {
@@ -46,9 +46,7 @@ public class PlayerController : MonoBehaviour
     {
         currentPlayerState = PlayerState.IDLE;
         StartCoroutine(_MovePlayerCoroutine());
-
-        OnPlayerDieEvent += Death;
-
+        StartCoroutine(_MovePlayerDownCoroutine());
         //Timing.RunCoroutine(_MovePlayerCoroutine());
 
         //Script execution order => Get Position after level script executes
@@ -70,29 +68,30 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
+    [SerializeField] private Vector3 nextPosition;
+
     IEnumerator _MovePlayerCoroutine()
     {
         while (true)
         {
             if (movementString.Count != 0 && currentPlayerState == PlayerState.IDLE)
             {
-                if (!ValidateVerticalBoundary(GetMovement(movementString[0])))
-                {
+                GetMovement(movementString[0]);
+                //if (!ValidateVerticalBoundary(nextPosition))
+                //{
                     //Check Boundaries
                     if (ValidateBoundary())
                     {
-                        Tween.Position(gameObject.transform, GetMovement(movementString[0]), tweenDuration, 0, Tween.EaseOutBack, Tween.LoopType.None, HandleTweenStarted, HandleTweenFinished);
+                        Tween.Position(gameObject.transform, nextPosition, tweenDuration, 0, Tween.EaseOutBack, Tween.LoopType.None, HandleTweenStarted, HandleTweenFinished);
                         //Wait Tween duration
-                        yield return new WaitForSeconds(tweenDuration);
-                        //Check If it should stop executing the queued swipes.(freezeMovement is changed in the HandleTweenFinished() )
-                        if (freezeMovement) yield return StartCoroutine(_MovePlayerDownCoroutine());
+                        yield return new WaitForSeconds(tweenDuration);                      
                     }
                     else
                     {
                         yield return new WaitForSeconds(tweenDuration); // or wait one frame 
                         HandleTweenFinished();
                     }
-                }             
+                //}             
             }
             //yield return Timing.WaitUntilDone(currentPlayerState == PlayerState.IDLE);
             yield return new WaitUntil( () => currentPlayerState == PlayerState.IDLE);
@@ -100,30 +99,19 @@ public class PlayerController : MonoBehaviour
     }
        
     /// <summary>
-    /// 
     /// Move player one grid cell down
     /// if there is platform underneath the player stop moving down 'falling down' => break;
     /// else continue moving down until you hit the platform or boundary(Die).
-    /// 
     /// </summary>
-    /// <returns></returns>
     IEnumerator _MovePlayerDownCoroutine()
     {
         while(true)
         {
+            yield return new WaitUntil(() => freezeMovement);
+            GetMovement("DOWN");
             //Move player Down one grid
-            Tween.Position(gameObject.transform, GetMovement("DOWN"), tweenDuration, 0, Tween.EaseOutBack, Tween.LoopType.None);
-            yield return new WaitForSeconds(tweenDuration);
-            //Check if there is platfom underneath
-            if(CheckPlatformUnderneath())
-            {
-                break;
-            }
-            else
-            {
-                ValidateVerticalBoundary(GetMovement("DOWN"));
-                StopCoroutine(_MovePlayerDownCoroutine());
-            }
+            Tween.Position(gameObject.transform, nextPosition, tweenDuration, 0, Tween.EaseOutBack, Tween.LoopType.None, HandleTweenStarted, HandleTweenFinished);
+            yield return new WaitForSeconds(tweenDuration);   
         }
     }
 
@@ -149,29 +137,46 @@ public class PlayerController : MonoBehaviour
 
     void HandleTweenFinished()
     {
+        if (!CheckPlatformUnderneath())
+        {
+            freezeMovement = true;
+        }
+        else
+        {
+            gameObject.transform.position = nextPosition;
+            nextPosition = gameObject.transform.position;
+          
+            BasePlatform platform = GetPlatformUnderneath();
+            if(platform != null)
+            {
+                platform.Interact(this);
+                if (platform.GetPlatformType() == PlatformType.BREAKABLE && freezeMovement) { freezeMovement = true; return; }        
+            }
+            freezeMovement = false;
 
-        if (!CheckPlatformUnderneath()) freezeMovement = true;
-        else freezeMovement = false;
-        currentPlayerState = PlayerState.IDLE;
-        //Remove last movement from the list
-        if (movementString.Count > 0) movementString.RemoveAt(0);
+            currentPlayerState = PlayerState.IDLE;
+            //Remove last movement from the list
+            if (movementString.Count > 0 && !freezeMovement) movementString.RemoveAt(0);
+        }
+
     }
 
     //Get Position where to move 
-    private Vector2 GetMovement(string str)
+    private void GetMovement(string str)
     {
         switch (str)
         {
-            case "UP": return gameObject.transform.position + upVector;
-            case "DOWN": return gameObject.transform.position + downVector;
-            case "RIGHT": return gameObject.transform.position + rightVector;
-            case "LEFT": return gameObject.transform.position + leftVector;
+            case "UP": nextPosition = gameObject.transform.position + upVector; break;
+            case "DOWN": nextPosition = gameObject.transform.position + downVector; break;
+            case "RIGHT": nextPosition = gameObject.transform.position + rightVector; break;
+            case "LEFT": nextPosition = gameObject.transform.position + leftVector; break;
 
             default:
-                return gameObject.transform.position;
+                nextPosition = gameObject.transform.position; break;
         }
     }
 
+    //Called at start
     private void RetrieveMovePosition()
     {
         Level levelScript = TerrainObject.GetChild(0).GetComponent<Level>();
@@ -207,10 +212,10 @@ public class PlayerController : MonoBehaviour
                 if (GetMovement("DOWN").y < -verticalBoundary) return false;
                 return true;*/
             case "RIGHT":
-                if (GetMovement("RIGHT").x > horizontalBoundary) return false;
+                if (nextPosition.x > horizontalBoundary) return false;
                 return true;
             case "LEFT":
-                if (GetMovement("LEFT").x < -horizontalBoundary) return false;
+                if (nextPosition.x < -horizontalBoundary) return false;
                 return true;
 
             default: return true;
@@ -219,22 +224,42 @@ public class PlayerController : MonoBehaviour
 
     private bool ValidateVerticalBoundary(Vector2 movement)
     {
-        if (movement.y >= verticalBoundary || movement.y <= -verticalBoundary) { OnPlayerDieEvent?.Invoke(); return true; }
-
+        if (movement.y >= verticalBoundary || movement.y <= -verticalBoundary) return true;
         return false;
+    }
+    
+    private BasePlatform GetPlatformUnderneath()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, transform.localScale.y / 2 + +0.1f, 1 << 8);
+        if (hit)
+        {
+            BasePlatform platform = hit.collider.gameObject.GetComponent<BasePlatform>();
+            return platform;
+        }
+        else
+        {
+            return null;
+        }
+
+    }
+    
+    public bool GetFreeze()
+    {
+       return freezeMovement;
     }
     #endregion
 
-    private void Death()
+    public void Death()
     {
+        StopAllCoroutines();
         currentPlayerState = PlayerState.DEAD;
 
+        OnPlayerDieEvent?.Invoke();
         print("You have died");
     }
 
-    private void OnDrawGizmos()
+    private void OnBecameInvisible()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position, new Vector3(0, - (transform.localScale.y/2 + 0.1f), 0) );
+        Death();
     }
 }

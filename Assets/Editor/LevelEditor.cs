@@ -2,22 +2,6 @@
 using UnityEngine;
 using UnityEditor;
 
-public enum PickableType 
-{
-    Coin,
-    Heart,
-    None
-}
-
-public enum PlatformType 
-{
-
-    Grass,
-    Glass,
-    Normal,
-    None
-}
-
 public class LevelEditor : EditorWindow 
 {
     public static int levelNumber; 
@@ -29,30 +13,37 @@ public class LevelEditor : EditorWindow
 
     #region Resources
     [Header("Sprites")]
-    [SerializeField] private Sprite platformGrassSprite;
-    [SerializeField] private Sprite platformGlassSprite;
     [SerializeField] private Sprite platformNormalSprite;
+    [SerializeField] private Sprite platformBreakableSprite;
+    [SerializeField] private Sprite platformHaySprite;
+    [SerializeField] private Sprite platformSpikeSprite;
+    [SerializeField] private Sprite platformSlideSprite;
+
     [SerializeField] private Sprite coinSprite;
     [SerializeField] private Sprite heartSprite;
 
     [Header("Textures")]
-    [SerializeField] private Texture platformGrassTexture;
-    [SerializeField] private Texture platformGlassTexture;
     [SerializeField] private Texture platformNormalTexture;
+    [SerializeField] private Texture platformBreakableTexture;
+    [SerializeField] private Texture platformHayTexture;
+    [SerializeField] private Texture platformSpikeTexture;
+    [SerializeField] private Texture platformSlideTexture;
+
     [SerializeField] private Texture coinTexture;
     [SerializeField] private Texture heartTexture;
     [SerializeField] private Texture defaultTexture;
     #endregion
-    
+
     #region Drop Down Variables
-    private bool isPlatformClick = false;
-    private bool isPickableClick = false;
-    private int selectedPlatformIndex;
+    /* private bool isPlatformClick = false;
+     private bool isPickableClick = false;
+     private int selectedPlatformIndex;*/
     private PlatformType selectedPlatformType;
     private PickableType selectedPickableType;
     
     #endregion 
     private Dictionary<int, PlatformInfo> dictionary = new Dictionary<int, PlatformInfo>();
+
     private void Awake() 
     {
         Debug.Log("Loading Assets");
@@ -61,39 +52,52 @@ public class LevelEditor : EditorWindow
         
         testObject = Resources.Load<GameObject>("Test Sprite");
         //Sprites
-        platformGrassSprite = Resources.Load<Sprite>("Sprites/GrassPlatform");
-        platformGlassSprite = Resources.Load<Sprite>("Sprites/GlassPlatform");
-        platformNormalSprite = Resources.Load<Sprite>("Sprites/NormalPlatform");
-        coinSprite = Resources.Load<Sprite>("Sprites/Coin");
-        heartSprite = Resources.Load<Sprite>("Sprites/Heart 1");
+        platformNormalSprite = Resources.Load<Sprite>("Sprites/Platforms/NormalPlatform");
+        platformBreakableSprite = Resources.Load<Sprite>("Sprites/Platforms/BreakablePlatform");
+
+        platformHaySprite = Resources.Load<Sprite>("Sprites/Platforms/HayPlatform");
+        platformSpikeSprite = Resources.Load<Sprite>("Sprites/Platforms/SpikePlatform");
+        platformSlideSprite = Resources.Load<Sprite>("Sprites/Platforms/SlidePlatform");
+
+        coinSprite = Resources.Load<Sprite>("Sprites/Pickables/Coin");
+        heartSprite = Resources.Load<Sprite>("Sprites/Pickables/Heart 1");
 
         //Texture
-        platformGrassTexture = Resources.Load<Texture>("Sprites/GrassPlatform");
-        platformGlassTexture = Resources.Load<Texture>("Sprites/GlassPlatform");
-        platformNormalTexture = Resources.Load<Texture>("Sprites/NormalPlatform");
-        coinTexture = Resources.Load<Texture>("Sprites/Coin");
-        heartTexture = Resources.Load<Texture>("Sprites/Heart 1");
+        platformNormalTexture = Resources.Load<Texture>("Sprites/Platforms/NormalPlatform");
+        platformBreakableTexture = Resources.Load<Texture>("Sprites/Platforms/BreakablePlatform");
+
+        platformHayTexture = Resources.Load<Texture>("Sprites/Platforms/HayPlatform");
+        platformSpikeTexture = Resources.Load<Texture>("Sprites/Platforms/SpikePlatform");
+        platformSlideTexture = Resources.Load<Texture>("Sprites/Platforms/SlidePlatform");
+
+        coinTexture = Resources.Load<Texture>("Sprites/Pickables/Coin");
+        heartTexture = Resources.Load<Texture>("Sprites/Pickables/Heart 1");
         defaultTexture = Resources.Load<Texture>("Sprites/White1x1");
 
         #endregion
 
         gridSize = 5;
 
-        selectedPlatformType = PlatformType.None;
+        selectedPlatformType = PlatformType.NONE;
         spaceBetweenPlatforms = new Vector3(1 , 1, 0);
 
     }
     [MenuItem("Window/Custom Windows/LevelEditor")]
+
     public static void ShowWindow()
     {
         GetWindow<LevelEditor>("Level Generator");
     }
+
     private void OnGUI() 
     {
         #region Input Fields
         gridSize = EditorGUILayout.IntField("Enter Grid Size" ,gridSize);
         saveLevelPath = EditorGUILayout.TextField("Path To Save Level", saveLevelPath);
         spaceBetweenPlatforms = EditorGUILayout.Vector3Field("Enter the desired space between platforms",  spaceBetweenPlatforms);
+
+        selectedPlatformType = (PlatformType) EditorGUILayout.EnumPopup("Select Platform Type ", selectedPlatformType);
+        selectedPickableType = (PickableType) EditorGUILayout.EnumPopup("Select Pickable Type ", selectedPickableType);
         #endregion
 
         GUI.color = Color.yellow;
@@ -130,7 +134,7 @@ public class LevelEditor : EditorWindow
         CreateGrid(gridSize, 25, 25, 50, 200, "Level Grid", 25);
 
         // Shows the drop down menu to select the platform type
-        if(isPlatformClick)
+        /*if(isPlatformClick)
         {      
             selectedPlatformType = dictionary[selectedPlatformIndex].GetPlatformType();
 
@@ -164,11 +168,10 @@ public class LevelEditor : EditorWindow
                 dictionary[selectedPlatformIndex].ChangePickable(selectedPickableType);
                 isPickableClick = false;
             }
-
-
         }
-
+        */
     }
+
     private void CreateGrid(int gridSize, float buttonSize, float spaceBetween, float posX, float posY, string boxName, float boxOffset)
     {
         float initialPosY = posY;
@@ -191,20 +194,20 @@ public class LevelEditor : EditorWindow
                 {
                     if (GUI.Button(new Rect(initialPosX, initialPosY + boxSize2 / 2 - 20, buttonSize*3, buttonSize), GetPickableTexture(dictionary[buttonIndex].GetPickableType())))
                     {
-                        if(isPlatformClick) isPlatformClick = false;
+                        //if(isPlatformClick) isPlatformClick = false;
 
-                        selectedPlatformIndex = buttonIndex;
-                        selectedPickableType = dictionary[buttonIndex].GetPickableType();
-                        isPickableClick = true;
+                        //selectedPlatformIndex = buttonIndex;
+                        dictionary[buttonIndex].ChangePickable(selectedPickableType);
+                        //isPickableClick = true;
                     }
                 }
                 else
                 {
                     if (GUI.Button(new Rect(initialPosX, initialPosY + boxSize2 / 2 - 20, buttonSize*3, buttonSize), GetDefaultTexture()))
                     {
-                        dictionary[buttonIndex] = new PlatformInfo(i, j, PlatformType.None, PickableType.None);
-                        selectedPlatformIndex = buttonIndex;
-                        isPickableClick = true;
+                        dictionary[buttonIndex] = new PlatformInfo(i, j, PlatformType.NONE, selectedPickableType);
+                        //selectedPlatformIndex = buttonIndex;
+                        //isPickableClick = true;
                     }
                 }
 
@@ -213,10 +216,10 @@ public class LevelEditor : EditorWindow
                 {
                     if(GUI.Button(new Rect(initialPosX + boxSize2 / 2 - 41, initialPosY + boxSize2 / 2 + 5, buttonSize * 3, buttonSize), GetPlatformTexture(dictionary[buttonIndex].GetPlatformType()) ))
                     {
-                        if(isPickableClick) isPickableClick = false;
-                        isPlatformClick = true;
-                        selectedPlatformIndex = buttonIndex;
-                        selectedPlatformType = dictionary[buttonIndex].GetPlatformType();
+                        //if(isPickableClick) isPickableClick = false;
+                        //isPlatformClick = true;
+                        //selectedPlatformIndex = buttonIndex;
+                        dictionary[buttonIndex].ChangePlatform(selectedPlatformType);
                     }
                 }
                 else
@@ -225,9 +228,9 @@ public class LevelEditor : EditorWindow
                     if (GUI.Button(new Rect(initialPosX + boxSize2 / 2 - 41, initialPosY + boxSize2 / 2 + 5, buttonSize * 3, buttonSize), GetDefaultTexture()))
                     {
 
-                        dictionary[buttonIndex] = new PlatformInfo(i, j, PlatformType.None, PickableType.None);
-                        isPlatformClick = true;
-                        selectedPlatformIndex = buttonIndex;
+                        dictionary[buttonIndex] = new PlatformInfo(i, j, selectedPlatformType, PickableType.NONE);
+                        //isPlatformClick = true;
+                        //selectedPlatformIndex = buttonIndex;
                     }
                 }
 
@@ -240,6 +243,7 @@ public class LevelEditor : EditorWindow
         GUI.color = Color.white;
 
     }
+
     private void SpawnLevel()
     {
 
@@ -283,20 +287,22 @@ public class LevelEditor : EditorWindow
 
                 PickableType pickableType = dictionary[i+1].GetPickableType();
 
-                if(platformType != PlatformType.None)
+                if(platformType != PlatformType.NONE)
                 {
                     gm.gameObject.transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = GetPlatformSprite(platformType);
                     gm.gameObject.transform.GetChild(1).gameObject.SetActive(true);
+                    AttachPlatformScript(platformType, gm.gameObject.transform.GetChild(1).gameObject);
                 }
                 else
                 {
                     gm.gameObject.transform.GetChild(1).gameObject.SetActive(false);
                 }
 
-                if(pickableType != PickableType.None)
+                if(pickableType != PickableType.NONE)
                 {
                     gm.gameObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = GetPickableSprite(pickableType);
                     gm.gameObject.transform.GetChild(0).gameObject.SetActive(true);
+                    AttachInteractableScript(pickableType, gm.gameObject.transform.GetChild(0).gameObject);
                 }
                 else
                 {
@@ -315,48 +321,116 @@ public class LevelEditor : EditorWindow
 
         parentObject.GetComponent<Level>().AddList(tempList);
         PrefabUtility.SaveAsPrefabAsset(parentObject, saveLevelPath + parentObject.name + ".prefab");
-        GameObject.DestroyImmediate(parentObject);
+        DestroyImmediate(parentObject);
     }
 
     #region Helper Functions
+    private void AttachInteractableScript(PickableType pickableType, GameObject go)
+    {
+        switch (pickableType)
+        {
+            case PickableType.HEART:
+                go.AddComponent<Heart>();
+                break;
+            case PickableType.COIN:
+                go.AddComponent<Coin>();
+                break;
+            default:
+                break;
+        }
+        go.AddComponent<BoxCollider2D>().isTrigger = true;
+    }
+
+    private void AttachPlatformScript(PlatformType platformType, GameObject go)
+    {
+        BasePlatform script;
+        go.layer = 8;
+        go.AddComponent<BoxCollider2D>();
+        switch (platformType)
+        {
+            case PlatformType.NORMAL:
+                script = go.AddComponent<BasePlatform>();
+                script.SetUp(platformType);
+                break;
+            case PlatformType.HAY:
+                script = go.AddComponent<HayPlatform>();
+                script.SetUp(platformType);
+                break;
+            case PlatformType.SPIKE:
+                script = go.AddComponent<SpikePlatform>();
+                script.SetUp(platformType);
+                break;
+            case PlatformType.BREAKABLE:
+                script = go.AddComponent<BreakablePlatform>();
+                script.SetUp(platformType);
+                break;
+            case PlatformType.SLIDE:
+                script = go.AddComponent<SlidePlatform>();
+                script.SetUp(platformType);
+                break;
+            case PlatformType.DOUBLE:
+                script = go.AddComponent<DoublePlatform>();
+                script.SetUp(platformType);
+                break;
+
+            default:
+                break;
+        }
+        go.AddComponent<BoxCollider2D>().isTrigger = true;
+    }
+
     private Sprite GetPlatformSprite(PlatformType platformType)
     {
         switch(platformType)
         {
-            case PlatformType.Grass: return platformGrassSprite;
-            case PlatformType.Glass: return platformGlassSprite;
-            case PlatformType.Normal: return platformNormalSprite;
+            case PlatformType.NORMAL: return platformNormalSprite;
+            case PlatformType.BREAKABLE: return platformBreakableSprite;
+            case PlatformType.HAY: return platformHaySprite;
+
+            case PlatformType.SLIDE: return platformSlideSprite;
+            case PlatformType.SPIKE: return platformSpikeSprite;
+            case PlatformType.DOUBLE: return platformNormalSprite;
+
             default: return null;
         }
-    }  
+    }
+
     private Sprite GetPickableSprite(PickableType pickableType)
     {
         switch(pickableType)
         {
-            case PickableType.Coin: return coinSprite;
-            case PickableType.Heart: return heartSprite;
+            case PickableType.COIN: return coinSprite;
+            case PickableType.HEART: return heartSprite;
             default: return null;
         }
-    } 
+    }
+
     private Texture GetPlatformTexture(PlatformType platformType)
     {
         switch(platformType)
         {
-            case PlatformType.Grass: return platformGrassTexture;
-            case PlatformType.Glass: return platformGlassTexture;
-            case PlatformType.Normal: return platformNormalTexture;
+            case PlatformType.NORMAL: return platformNormalTexture;
+            case PlatformType.BREAKABLE: return platformBreakableTexture;
+            case PlatformType.HAY: return platformHayTexture;
+
+            case PlatformType.SLIDE: return platformSlideTexture;
+            case PlatformType.SPIKE: return platformSpikeTexture;
+            case PlatformType.DOUBLE: return platformNormalTexture;
+            case PlatformType.NONE: return defaultTexture;
             default: return defaultTexture;
         }
     }
+
     private Texture GetPickableTexture(PickableType pickableType)
     {
         switch(pickableType)
         {
-            case PickableType.Coin: return coinTexture;
-            case PickableType.Heart: return heartTexture;
+            case PickableType.COIN: return coinTexture;
+            case PickableType.HEART: return heartTexture;
             default: return defaultTexture;
         }
     }
+
     private Texture GetDefaultTexture()
     {
         return defaultTexture;
