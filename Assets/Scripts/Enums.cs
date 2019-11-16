@@ -2,6 +2,7 @@
 {
     HEART,
     COIN,
+    WEAPON,
     NONE
 }
 

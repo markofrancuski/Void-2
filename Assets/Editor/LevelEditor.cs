@@ -21,6 +21,7 @@ public class LevelEditor : EditorWindow
 
     [SerializeField] private Sprite coinSprite;
     [SerializeField] private Sprite heartSprite;
+    [SerializeField] private Sprite weaponSprite;
 
     [Header("Textures")]
     [SerializeField] private Texture platformNormalTexture;
@@ -31,6 +32,7 @@ public class LevelEditor : EditorWindow
 
     [SerializeField] private Texture coinTexture;
     [SerializeField] private Texture heartTexture;
+    [SerializeField] private Texture weaponTexture;
     [SerializeField] private Texture defaultTexture;
     #endregion
 
@@ -54,24 +56,25 @@ public class LevelEditor : EditorWindow
         //Sprites
         platformNormalSprite = Resources.Load<Sprite>("Sprites/Platforms/NormalPlatform");
         platformBreakableSprite = Resources.Load<Sprite>("Sprites/Platforms/BreakablePlatform");
-
         platformHaySprite = Resources.Load<Sprite>("Sprites/Platforms/HayPlatform");
         platformSpikeSprite = Resources.Load<Sprite>("Sprites/Platforms/SpikePlatform");
         platformSlideSprite = Resources.Load<Sprite>("Sprites/Platforms/SlidePlatform");
 
         coinSprite = Resources.Load<Sprite>("Sprites/Pickables/Coin");
         heartSprite = Resources.Load<Sprite>("Sprites/Pickables/Heart 1");
+        weaponSprite = Resources.Load<Sprite>("Sprites/Pickables/RandomBox");
 
         //Texture
         platformNormalTexture = Resources.Load<Texture>("Sprites/Platforms/NormalPlatform");
         platformBreakableTexture = Resources.Load<Texture>("Sprites/Platforms/BreakablePlatform");
-
         platformHayTexture = Resources.Load<Texture>("Sprites/Platforms/HayPlatform");
         platformSpikeTexture = Resources.Load<Texture>("Sprites/Platforms/SpikePlatform");
         platformSlideTexture = Resources.Load<Texture>("Sprites/Platforms/SlidePlatform");
 
         coinTexture = Resources.Load<Texture>("Sprites/Pickables/Coin");
         heartTexture = Resources.Load<Texture>("Sprites/Pickables/Heart 1");
+        weaponTexture = Resources.Load<Texture>("Sprites/Pickables/RandomBox");
+
         defaultTexture = Resources.Load<Texture>("Sprites/White1x1");
 
         #endregion
@@ -79,6 +82,7 @@ public class LevelEditor : EditorWindow
         gridSize = 5;
 
         selectedPlatformType = PlatformType.NONE;
+        selectedPickableType = PickableType.NONE;
         spaceBetweenPlatforms = new Vector3(1 , 1, 0);
 
     }
@@ -327,6 +331,7 @@ public class LevelEditor : EditorWindow
     #region Helper Functions
     private void AttachInteractableScript(PickableType pickableType, GameObject go)
     {
+        go.GetComponent<BoxCollider2D>().size = Vector2.one;
         switch (pickableType)
         {
             case PickableType.HEART:
@@ -335,17 +340,19 @@ public class LevelEditor : EditorWindow
             case PickableType.COIN:
                 go.AddComponent<Coin>();
                 break;
+            case PickableType.WEAPON:
+                go.AddComponent<RandomWeapon>();
+                break;
             default:
                 break;
         }
-        go.AddComponent<BoxCollider2D>().isTrigger = true;
     }
 
     private void AttachPlatformScript(PlatformType platformType, GameObject go)
     {
         BasePlatform script;
         go.layer = 8;
-        go.AddComponent<BoxCollider2D>();
+        go.GetComponent<BoxCollider2D>().size = new Vector2(1, 0.5f);
         switch (platformType)
         {
             case PlatformType.NORMAL:
@@ -376,7 +383,6 @@ public class LevelEditor : EditorWindow
             default:
                 break;
         }
-        go.AddComponent<BoxCollider2D>().isTrigger = true;
     }
 
     private Sprite GetPlatformSprite(PlatformType platformType)
@@ -401,6 +407,7 @@ public class LevelEditor : EditorWindow
         {
             case PickableType.COIN: return coinSprite;
             case PickableType.HEART: return heartSprite;
+            case PickableType.WEAPON: return weaponSprite;
             default: return null;
         }
     }
@@ -427,6 +434,7 @@ public class LevelEditor : EditorWindow
         {
             case PickableType.COIN: return coinTexture;
             case PickableType.HEART: return heartTexture;
+            case PickableType.WEAPON: return weaponTexture;
             default: return defaultTexture;
         }
     }

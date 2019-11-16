@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BasePlatform : MonoBehaviour
+public class BasePlatform : MonoBehaviour, IDestroyable
 {
 
     public PlatformType GetPlatformType()
@@ -14,7 +14,10 @@ public class BasePlatform : MonoBehaviour
 
     public virtual void Interact(PlayerController controller)
     {
-
+        if(controller.GetFallingFloorsHeight() > 0)
+        {
+            controller.Death();
+        }
     }
 
     public void SetUp(PlatformType platform)
@@ -22,7 +25,7 @@ public class BasePlatform : MonoBehaviour
         platformType = platform;
     }
 
-    public void DestroyPlatform()
+    public void DestroyObject()
     {
         gameObject.SetActive(false);
     }

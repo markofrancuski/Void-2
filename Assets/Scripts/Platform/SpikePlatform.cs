@@ -7,7 +7,6 @@ public class SpikePlatform : BasePlatform
 
     public override void Interact(PlayerController controller)
     {
-        base.Interact(controller);
         controller.Death();
     }
 }

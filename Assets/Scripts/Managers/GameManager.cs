@@ -10,8 +10,8 @@ public class GameManager : Singleton<GameManager>
 
     [SerializeField] private GameObject GameOverPanel;
 
-    [SerializeField] IntValue coinValue;
-    [SerializeField] TextMeshProUGUI coinValueText;
+    [SerializeField] private IntValue coinValue;
+    [SerializeField] private TextMeshProUGUI coinValueText;
 
     private void OnEnable()
     {
@@ -25,12 +25,8 @@ public class GameManager : Singleton<GameManager>
 
     private void Start()
     {
-        coinValueText.SetText(coinValue.currentValue.ToString());
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        
+       coinValueText.SetText(coinValue.currentValue.ToString());
+     
     }
 
     private void OnPlayerDeath()

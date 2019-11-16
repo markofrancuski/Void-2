@@ -11,7 +11,6 @@ public class BreakablePlatform : BasePlatform
 
     public override void Interact(PlayerController controller)
     {
-        base.Interact(controller);
         if (controller.GetFreeze())
         {
             gameObject.SetActive(false);

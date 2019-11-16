@@ -7,7 +7,7 @@ using MEC;
 //State Machine
 public enum PlayerState { IDLE, MOVING, DEAD, INTERACTING };
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IDestroyable
 {
     public PlayerState currentPlayerState;
 
@@ -51,6 +51,8 @@ public class PlayerController : MonoBehaviour
 
         //Script execution order => Get Position after level script executes
         Invoke("RetrieveMovePosition", .5f);
+        
+
 
     }
 
@@ -58,17 +60,23 @@ public class PlayerController : MonoBehaviour
     {
         InputManager.OnSwipedEvent += AddMove;
         InputManager.OnPlayerStateCheckEvent += GetPlayerState;
+        InteractableManager.OnShieldActiveCheckEvent += () => IsProtected;
+        InteractableManager.OnShieldActivateEvent += ActivateShield;
     }
 
     private void OnDisable()
     {
         InputManager.OnSwipedEvent -= AddMove;
         InputManager.OnPlayerStateCheckEvent -= GetPlayerState;
+        InteractableManager.OnShieldActiveCheckEvent -= () => IsProtected;
+        InteractableManager.OnShieldActivateEvent -= ActivateShield;
     }
 
     #endregion
 
     [SerializeField] private Vector3 nextPosition;
+
+    [SerializeField] private GameObject shieldBarrierGO;
 
     IEnumerator _MovePlayerCoroutine()
     {
@@ -97,22 +105,47 @@ public class PlayerController : MonoBehaviour
             yield return new WaitUntil( () => currentPlayerState == PlayerState.IDLE);
         }
     }
-       
+
     /// <summary>
     /// Move player one grid cell down
     /// if there is platform underneath the player stop moving down 'falling down' => break;
     /// else continue moving down until you hit the platform or boundary(Die).
     /// </summary>
+    int fallingFloorNumber = 0;
+
     IEnumerator _MovePlayerDownCoroutine()
     {
+        
         while(true)
         {
             yield return new WaitUntil(() => freezeMovement);
             GetMovement("DOWN");
+            fallingFloorNumber++;
             //Move player Down one grid
             Tween.Position(gameObject.transform, nextPosition, tweenDuration, 0, Tween.EaseOutBack, Tween.LoopType.None, HandleTweenStarted, HandleTweenFinished);
             yield return new WaitForSeconds(tweenDuration);   
         }
+    }
+
+    [SerializeField] private bool isProtected;
+    public bool IsProtected
+    {
+        get { return isProtected; }
+        set { isProtected = value; }
+    }
+
+    void ActivateShield()
+    {
+        StartCoroutine(_ActivateShieldCoroutine());
+    }
+
+    IEnumerator _ActivateShieldCoroutine()
+    {
+        isProtected = true;
+        shieldBarrierGO.SetActive(true);
+        yield return new WaitForSeconds(3);
+        isProtected = false;
+        shieldBarrierGO.SetActive(false);
     }
 
     #region EVENT/DELEGATE FUNCTIONS
@@ -129,12 +162,15 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region HELPER FUNCTIONS
+    public int GetFallingFloorsHeight() => fallingFloorNumber;
+
     //Change later the name of the method
     void HandleTweenStarted()
     {
         currentPlayerState = PlayerState.MOVING;
     }
 
+    //Called when one move is done
     void HandleTweenFinished()
     {
         if (!CheckPlatformUnderneath())
@@ -150,7 +186,8 @@ public class PlayerController : MonoBehaviour
             if(platform != null)
             {
                 platform.Interact(this);
-                if (platform.GetPlatformType() == PlatformType.BREAKABLE && freezeMovement) { freezeMovement = true; return; }        
+                fallingFloorNumber = 0;
+                if (platform.GetPlatformType() == PlatformType.BREAKABLE && freezeMovement ) { freezeMovement = true; return; }        
             }
             freezeMovement = false;
 
@@ -249,6 +286,15 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
+    #region INTERFACE IMPLEMENTATION
+
+    public void DestroyObject()
+    {
+        Death();
+    }
+
+    #endregion
+
     public void Death()
     {
         StopAllCoroutines();
@@ -261,5 +307,10 @@ public class PlayerController : MonoBehaviour
     private void OnBecameInvisible()
     {
         Death();
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Projectile")) OnPlayerDieEvent?.Invoke();
     }
 }
