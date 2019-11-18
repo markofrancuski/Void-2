@@ -5,7 +5,7 @@ using Pixelplacement;
 using MEC;
 
 //State Machine
-public enum PlayerState { IDLE, MOVING, DEAD, INTERACTING };
+public enum PlayerState { IDLE, MOVING, DEAD, INTERACTING, STUNNED};
 
 public class PlayerController : MonoBehaviour, IDestroyable
 {
@@ -21,7 +21,9 @@ public class PlayerController : MonoBehaviour, IDestroyable
     #endregion
 
     #region MOVEMENT VARIABLES
-    public List<string> movementString;
+    //public List<string> movementString;
+    [SerializeField] public LinkedList<string> movementList;
+
     [SerializeField] private Transform TerrainObject;
     private float movePaceHorizontal;
     private float movePaceVertical;
@@ -30,6 +32,7 @@ public class PlayerController : MonoBehaviour, IDestroyable
     [SerializeField] private float verticalBoundary;
 
     //Movement Vector
+    [SerializeField] private Vector3 nextPosition;
     private Vector3 upVector;
     private Vector3 downVector;
     private Vector3 rightVector;
@@ -44,88 +47,55 @@ public class PlayerController : MonoBehaviour, IDestroyable
     // Start is called before the first frame update
     void Start()
     {
+        movementList = new LinkedList<string>();
+
         currentPlayerState = PlayerState.IDLE;
         StartCoroutine(_MovePlayerCoroutine());
-        StartCoroutine(_MovePlayerDownCoroutine());
+        //StartCoroutine(_MovePlayerDownCoroutine());
         //Timing.RunCoroutine(_MovePlayerCoroutine());
 
         //Script execution order => Get Position after level script executes
         Invoke("RetrieveMovePosition", .5f);
-        
-
 
     }
 
     private void OnEnable()
     {
+        SlidePlatform.OnSlidePlatformInteractEvent += AddFirstMove;
         InputManager.OnSwipedEvent += AddMove;
         InputManager.OnPlayerStateCheckEvent += GetPlayerState;
         InteractableManager.OnShieldActiveCheckEvent += () => IsProtected;
         InteractableManager.OnShieldActivateEvent += ActivateShield;
+        InteractableManager.OnWeaponBoostActivateCheckEvent += () => IsWeaponBoostActive;
     }
 
     private void OnDisable()
     {
+        SlidePlatform.OnSlidePlatformInteractEvent -= AddFirstMove;
         InputManager.OnSwipedEvent -= AddMove;
         InputManager.OnPlayerStateCheckEvent -= GetPlayerState;
         InteractableManager.OnShieldActiveCheckEvent -= () => IsProtected;
         InteractableManager.OnShieldActivateEvent -= ActivateShield;
+        InteractableManager.OnWeaponBoostActivateCheckEvent -= () => IsWeaponBoostActive;
+    }
+
+    private void OnBecameInvisible()
+    {
+        Death();
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Projectile")) Stun();
     }
 
     #endregion
 
-    [SerializeField] private Vector3 nextPosition;
-
+    #region CHARACTER INTERACTION VARIABLES
+    int fallingFloorNumber;
     [SerializeField] private GameObject shieldBarrierGO;
 
-    IEnumerator _MovePlayerCoroutine()
-    {
-        while (true)
-        {
-            if (movementString.Count != 0 && currentPlayerState == PlayerState.IDLE)
-            {
-                GetMovement(movementString[0]);
-                //if (!ValidateVerticalBoundary(nextPosition))
-                //{
-                    //Check Boundaries
-                    if (ValidateBoundary())
-                    {
-                        Tween.Position(gameObject.transform, nextPosition, tweenDuration, 0, Tween.EaseOutBack, Tween.LoopType.None, HandleTweenStarted, HandleTweenFinished);
-                        //Wait Tween duration
-                        yield return new WaitForSeconds(tweenDuration);                      
-                    }
-                    else
-                    {
-                        yield return new WaitForSeconds(tweenDuration); // or wait one frame 
-                        HandleTweenFinished();
-                    }
-                //}             
-            }
-            //yield return Timing.WaitUntilDone(currentPlayerState == PlayerState.IDLE);
-            yield return new WaitUntil( () => currentPlayerState == PlayerState.IDLE);
-        }
-    }
-
-    /// <summary>
-    /// Move player one grid cell down
-    /// if there is platform underneath the player stop moving down 'falling down' => break;
-    /// else continue moving down until you hit the platform or boundary(Die).
-    /// </summary>
-    int fallingFloorNumber = 0;
-
-    IEnumerator _MovePlayerDownCoroutine()
-    {
-        
-        while(true)
-        {
-            yield return new WaitUntil(() => freezeMovement);
-            GetMovement("DOWN");
-            fallingFloorNumber++;
-            //Move player Down one grid
-            Tween.Position(gameObject.transform, nextPosition, tweenDuration, 0, Tween.EaseOutBack, Tween.LoopType.None, HandleTweenStarted, HandleTweenFinished);
-            yield return new WaitForSeconds(tweenDuration);   
-        }
-    }
+    public bool IsWeaponBoostActive;
 
     [SerializeField] private bool isProtected;
     public bool IsProtected
@@ -134,9 +104,36 @@ public class PlayerController : MonoBehaviour, IDestroyable
         set { isProtected = value; }
     }
 
-    void ActivateShield()
+    #endregion
+
+    #region COROUTINES
+
+    IEnumerator _MovePlayerCoroutine()
     {
-        StartCoroutine(_ActivateShieldCoroutine());
+        while (true)
+        {
+            if (movementList.Count != 0 && currentPlayerState == PlayerState.IDLE) // currentPlayerState != PlayerState.INTERACING
+            {
+             
+                GetMovement(movementList.First);
+
+                if (ValidateBoundary())
+                {
+                    Tween.Position(gameObject.transform, nextPosition, tweenDuration, 0, Tween.EaseOutBack, Tween.LoopType.None, HandleTweenStarted, HandleTweenFinished);
+                    //Wait Tween duration
+                    yield return new WaitForSeconds(tweenDuration);
+                }
+                else
+                {
+                    yield return new WaitForSeconds(tweenDuration); // or wait one frame 
+                    HandleTweenFinished();
+                }
+                  
+                //yield return Timing.WaitUntilDone(currentPlayerState == PlayerState.IDLE);               
+            }
+            yield return new WaitUntil(() => currentPlayerState == PlayerState.IDLE);
+        }
+
     }
 
     IEnumerator _ActivateShieldCoroutine()
@@ -147,18 +144,32 @@ public class PlayerController : MonoBehaviour, IDestroyable
         isProtected = false;
         shieldBarrierGO.SetActive(false);
     }
+    
+    IEnumerator _InteractableCoroutine(float time)
+    {
+        currentPlayerState = PlayerState.INTERACTING;
+        yield return new WaitForSeconds(time);
+        currentPlayerState = PlayerState.IDLE;
+    }
+    #endregion
 
     #region EVENT/DELEGATE FUNCTIONS
 
     public void AddMove(string movement)
     {
-        movementString.Add(movement);
+        movementList.AddLast(movement);
+        //movementString.Add(movement);
+    }
+    public void AddFirstMove(string movement)
+    {
+        movementList.AddFirst(movement);
     }
 
     public PlayerState GetPlayerState()
     {
         return currentPlayerState;
     }
+
     #endregion
 
     #region HELPER FUNCTIONS
@@ -169,39 +180,40 @@ public class PlayerController : MonoBehaviour, IDestroyable
     {
         currentPlayerState = PlayerState.MOVING;
     }
+    public bool isFreeFall;
 
     //Called when one move is done
     void HandleTweenFinished()
     {
+        //Remove The move
+        if (movementList.Count > 0) movementList.RemoveFirst();
+        
+        //Check States
         if (!CheckPlatformUnderneath())
         {
-            freezeMovement = true;
+            fallingFloorNumber++;
+            AddMove("DOWN");
+            //Raycast don check distance
         }
         else
         {
+            
             gameObject.transform.position = nextPosition;
             nextPosition = gameObject.transform.position;
           
             BasePlatform platform = GetPlatformUnderneath();
             if(platform != null)
-            {
+            {             
                 platform.Interact(this);
                 fallingFloorNumber = 0;
-                if (platform.GetPlatformType() == PlatformType.BREAKABLE && freezeMovement ) { freezeMovement = true; return; }        
             }
-            freezeMovement = false;
-
-            currentPlayerState = PlayerState.IDLE;
-            //Remove last movement from the list
-            if (movementString.Count > 0 && !freezeMovement) movementString.RemoveAt(0);
         }
-
+        currentPlayerState = PlayerState.IDLE;
     }
-
     //Get Position where to move 
-    private void GetMovement(string str)
+    private void GetMovement(LinkedListNode<string> str)
     {
-        switch (str)
+        switch (str.Value)
         {
             case "UP": nextPosition = gameObject.transform.position + upVector; break;
             case "DOWN": nextPosition = gameObject.transform.position + downVector; break;
@@ -213,7 +225,6 @@ public class PlayerController : MonoBehaviour, IDestroyable
         }
     }
 
-    //Called at start
     private void RetrieveMovePosition()
     {
         Level levelScript = TerrainObject.GetChild(0).GetComponent<Level>();
@@ -232,15 +243,17 @@ public class PlayerController : MonoBehaviour, IDestroyable
 
     private bool CheckPlatformUnderneath()
     {
+       
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, transform.localScale.y/2 + +0.1f, 1 << 8);
         if (hit) return true;
-        else return false;
+        return false;
+        
     }
 
     private bool ValidateBoundary()
     {
         //First check 
-        switch (movementString[0])
+        switch (movementList.First.Value)
         {
             /*case "UP": // Raise Death flag 
                 if (GetMovement("UP").y > verticalBoundary) return false;
@@ -280,10 +293,6 @@ public class PlayerController : MonoBehaviour, IDestroyable
 
     }
     
-    public bool GetFreeze()
-    {
-       return freezeMovement;
-    }
     #endregion
 
     #region INTERFACE IMPLEMENTATION
@@ -295,6 +304,18 @@ public class PlayerController : MonoBehaviour, IDestroyable
 
     #endregion
 
+    #region CHARACTER INTERACTIONS
+
+    public bool GetFreeze()
+    {
+        return freezeMovement;
+    }
+
+    void ActivateShield()
+    {
+        StartCoroutine(_ActivateShieldCoroutine());
+    }
+
     public void Death()
     {
         StopAllCoroutines();
@@ -304,13 +325,12 @@ public class PlayerController : MonoBehaviour, IDestroyable
         print("You have died");
     }
 
-    private void OnBecameInvisible()
+    private void Stun()
     {
-        Death();
+        currentPlayerState = PlayerState.STUNNED;
+
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Projectile")) OnPlayerDieEvent?.Invoke();
-    }
+    #endregion
+
 }

@@ -11,12 +11,13 @@ public class BreakablePlatform : BasePlatform
 
     public override void Interact(PlayerController controller)
     {
-        if (controller.GetFreeze())
+
+        if(controller.GetFallingFloorsHeight() >= 1)
         {
+            controller.AddFirstMove("DOWN");
             gameObject.SetActive(false);
             Invoke("EnablePlatform", 2f);
         }
-        
         //base.Interact(controller);
     }
  

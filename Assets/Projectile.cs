@@ -7,9 +7,11 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private Rigidbody2D rigidBody;
 
+    [SerializeField] private Vector2 direction;
+
     private void FixedUpdate()
     {
-        rigidBody.velocity = Vector2.right * speed * Time.deltaTime;
+        rigidBody.velocity = direction * speed * Time.deltaTime;
 
     }
 

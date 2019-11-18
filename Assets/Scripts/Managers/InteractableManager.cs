@@ -6,6 +6,8 @@ using TMPro;
 
 public class InteractableManager : Singleton<InteractableManager>
 {
+    public delegate bool OnWeaponBoostActivateCheck();
+    public static event OnWeaponBoostActivateCheck OnWeaponBoostActivateCheckEvent;
 
     public delegate bool OnShieldActiveCheck();
     public static event OnShieldActiveCheck OnShieldActiveCheckEvent;
@@ -47,8 +49,10 @@ public class InteractableManager : Singleton<InteractableManager>
     [SerializeField] private TextMeshProUGUI shieldText;
 
     [SerializeField] private GameObject bombPrefab;
+    [SerializeField] private GameObject stunPrefab;
 
-    public void AddInteractable(int index, int amount)
+
+    private void AddWeapon(int index)
     {
         //If there player has Weapon boost => Recieves 2 random weapon. If player has weapon boost and its active reveice all three weapons
         switch (index)
@@ -70,6 +74,20 @@ public class InteractableManager : Singleton<InteractableManager>
         }
     }
 
+    public void AddInteractable(int index, int amount)
+    {
+        //Adds Random First Weapon
+        AddWeapon(index);
+        //If player has weapon boost actiuvated => Add Random Second Weapon
+
+        if ((bool)OnWeaponBoostActivateCheckEvent?.Invoke())
+        {             
+            AddWeapon(Random.Range(0, 3));
+        }
+        
+      
+    }
+
     public void OnInteractableItemClicked(int index)
     {
         switch (index)
@@ -79,14 +97,15 @@ public class InteractableManager : Singleton<InteractableManager>
                 {
                     //Retrieve bomb from pooler
                     Bomb--;
-                    GameObject go = Instantiate(bombPrefab, playerTransform.position, Quaternion.identity);
-                    go.SetActive(true);
+                    GameObject bombGO = Instantiate(bombPrefab, playerTransform.position, Quaternion.identity);
+                    bombGO.SetActive(true);
                 }
                 break;
             case 1:
                 if (Stun > 0)
                 {
                     Stun--;
+                    GameObject stunGO = Instantiate(stunPrefab, playerTransform.position, Quaternion.identity);
                 }
                 break;
             case 2:

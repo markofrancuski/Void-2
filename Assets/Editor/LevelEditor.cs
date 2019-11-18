@@ -357,27 +357,21 @@ public class LevelEditor : EditorWindow
         {
             case PlatformType.NORMAL:
                 script = go.AddComponent<BasePlatform>();
-                script.SetUp(platformType);
                 break;
             case PlatformType.HAY:
                 script = go.AddComponent<HayPlatform>();
-                script.SetUp(platformType);
                 break;
             case PlatformType.SPIKE:
                 script = go.AddComponent<SpikePlatform>();
-                script.SetUp(platformType);
                 break;
             case PlatformType.BREAKABLE:
                 script = go.AddComponent<BreakablePlatform>();
-                script.SetUp(platformType);
                 break;
             case PlatformType.SLIDE:
                 script = go.AddComponent<SlidePlatform>();
-                script.SetUp(platformType);
                 break;
             case PlatformType.DOUBLE:
                 script = go.AddComponent<DoublePlatform>();
-                script.SetUp(platformType);
                 break;
 
             default:
