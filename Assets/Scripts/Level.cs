@@ -45,8 +45,6 @@ public class Level : MonoBehaviour
         objects = newList;
     }
 
-
-
     public void StartLevel()
     {     
         //Get the sprite width in world space units
@@ -62,6 +60,7 @@ public class Level : MonoBehaviour
         //Divide screen width by sprite width, set to X axis scale
         newScale.x = worldScreenWidth / worldSpriteWidth * 0.2f;
         newScale.y = worldScreenHeight / 1 * 0.2f;
+        newScale.y = newScale.y - 0.4f;
         //0.2f  = 5 grid space
         moveX = newScale.x;
         moveY = newScale.y;

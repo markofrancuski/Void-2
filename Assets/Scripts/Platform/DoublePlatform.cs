@@ -5,4 +5,31 @@ using UnityEngine;
 public class DoublePlatform : BasePlatform
 {
 
+    private BasePlatform firstPlatform;
+    private BasePlatform secondPlatform;
+
+    private void Start()
+    {
+        firstPlatform = gameObject.transform.GetChild(0).GetComponent<BasePlatform>();
+        secondPlatform = gameObject.transform.GetChild(1).GetComponent<BasePlatform>();
+
+        firstPlatform.gameObject.SetActive(true);
+        secondPlatform.gameObject.SetActive(false);
+    }
+
+    public override void Interact(PlayerController controller)
+    {
+        if(firstPlatform.gameObject.activeInHierarchy)
+        {
+            firstPlatform.Interact(controller);
+            secondPlatform.gameObject.SetActive(true);
+            firstPlatform.gameObject.SetActive(false);
+        }
+        else
+        {
+            secondPlatform.Interact(controller);
+            secondPlatform.gameObject.SetActive(false);
+            firstPlatform.gameObject.SetActive(true);
+        }
+    }
 }

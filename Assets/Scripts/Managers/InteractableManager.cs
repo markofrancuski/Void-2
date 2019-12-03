@@ -106,6 +106,7 @@ public class InteractableManager : Singleton<InteractableManager>
                 {
                     Stun--;
                     GameObject stunGO = Instantiate(stunPrefab, playerTransform.position, Quaternion.identity);
+                    stunGO.SetActive(true);
                 }
                 break;
             case 2:

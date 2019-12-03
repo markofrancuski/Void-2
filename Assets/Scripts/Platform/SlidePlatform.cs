@@ -10,23 +10,28 @@ public class SlidePlatform : BasePlatform
     int rnd;
     public override void Interact(PlayerController controller)
     {
-        if (controller.GetFallingFloorsHeight() < 2)
+        if (controller.IsFreeFall && distanceFromUpperPlatform +0.4f >= Globals.Instance.movePaceHorizontal)
         {
-            //Start sliding player
-            int rnd = Random.Range(0, 2);
 
-            if (rnd == 0)
-            {
-                //Move Right
-                OnSlidePlatformInteractEvent?.Invoke("RIGHT");
-            }
-            else
-            {
-                //Move Left
-                OnSlidePlatformInteractEvent?.Invoke("LEFT");
-            }
         }
-        else controller.Death();
+        //{
+            //Start sliding player
+        int rnd = Random.Range(0, 2);
+
+        if (rnd == 0)
+        {
+            //Move Right
+            OnSlidePlatformInteractEvent?.Invoke("RIGHT");
+        }
+        else
+        {
+            //Move Left
+            OnSlidePlatformInteractEvent?.Invoke("LEFT");
+        }
+        controller.IsFreeFall = false;
+        controller.currentPlayerState = PlayerState.IDLE;
+        //}
+        //else controller.Death();
     }
 
 
