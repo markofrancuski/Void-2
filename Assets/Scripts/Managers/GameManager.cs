@@ -8,7 +8,24 @@ using TMPro;
 public class GameManager : Singleton<GameManager>
 {
 
-    [SerializeField] private GameObject GameOverPanel;
+    #region DELEGATES/EVENTS
+
+
+    public delegate bool OnPlayerCheckLifeSaver();
+    public static event OnPlayerCheckLifeSaver CheckPlayerLifeSaverEvent;
+
+    public delegate void OnReviveButtonClicked();
+    public static event OnReviveButtonClicked ReviveButtonClickedEvent;
+
+    public delegate void OnResetScene();
+    public static event OnResetScene ResetSceneEvent;
+   
+    #endregion 
+
+    [Header("UI REFERENCES")]
+    [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private GameObject revivePanel;
+    [SerializeField] private GameObject extraLifeImage;
 
     [SerializeField] private IntValue coinValue;
     [SerializeField] private TextMeshProUGUI coinValueText;
@@ -25,17 +42,36 @@ public class GameManager : Singleton<GameManager>
 
     private void Start()
     {
-       coinValueText.SetText(coinValue.currentValue.ToString());
-     
+        coinValueText.SetText(coinValue.currentValue.ToString());
+
+        UpdateExtralifeImage();
+    }
+
+    void UpdateExtralifeImage()
+    {
+        if ((bool)!CheckPlayerLifeSaverEvent?.Invoke()) extraLifeImage.SetActive(false);
+        else extraLifeImage.SetActive(true);
     }
 
     private void OnPlayerDeath()
     {
-        GameOverPanel.SetActive(true);
+        if( (bool) CheckPlayerLifeSaverEvent?.Invoke()) revivePanel.SetActive(true);
+        else gameOverPanel.SetActive(true);
+     
+    }
+
+    public void OnReviveButtonClick()
+    {
+        revivePanel.SetActive(false);
+        ReviveButtonClickedEvent?.Invoke();
+
+        UpdateExtralifeImage();
+        revivePanel.SetActive(false);
     }
 
     public void OnResetButtonClick()
     {
+        ResetSceneEvent?.Invoke();
         SceneManager.LoadScene(0);
     }
 

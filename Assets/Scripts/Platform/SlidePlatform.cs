@@ -8,8 +8,9 @@ public class SlidePlatform : BasePlatform
     public static event OnSlidePlatformInteract OnSlidePlatformInteractEvent;
 
     int rnd;
-    public override void Interact(PlayerController controller)
+    public override void Interact(Person controller)
     {
+        PrintObjectInterating(controller, "Slide");
         if (controller.IsFreeFall && distanceFromUpperPlatform +0.4f >= Globals.Instance.movePaceHorizontal)
         {
 
@@ -29,7 +30,7 @@ public class SlidePlatform : BasePlatform
             OnSlidePlatformInteractEvent?.Invoke("LEFT");
         }
         controller.IsFreeFall = false;
-        controller.currentPlayerState = PlayerState.IDLE;
+        controller.currentState = PersonState.IDLE;
         //}
         //else controller.Death();
     }

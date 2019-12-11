@@ -5,8 +5,9 @@ using UnityEngine;
 public class SpikePlatform : BasePlatform
 {
 
-    public override void Interact(PlayerController controller)
+    public override void Interact(Person controller)
     {
+        PrintObjectInterating(controller, "Spike");
         controller.Death();
     }
 }

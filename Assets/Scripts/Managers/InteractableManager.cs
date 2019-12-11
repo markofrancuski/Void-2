@@ -15,6 +15,10 @@ public class InteractableManager : Singleton<InteractableManager>
     public delegate void OnShieldActivate();
     public static event OnShieldActivate OnShieldActivateEvent;
 
+    public delegate int OnTeamPlayerCheck();
+    public static event OnTeamPlayerCheck GetPlayerTeamEvent;
+
+
     [SerializeField] private Transform playerTransform;
     private void Start()
     {
@@ -54,20 +58,20 @@ public class InteractableManager : Singleton<InteractableManager>
 
     private void AddWeapon(int index)
     {
-        //If there player has Weapon boost => Recieves 2 random weapon. If player has weapon boost and its active reveice all three weapons
+        //If there player has Weapon boost => Receives 2 random weapon. If player has weapon boost and its active reveice all three weapons
         switch (index)
         {
             case 0:
                 Bomb++;
-                Debug.Log("Got bomb!");
+                //Debug.Log("Got bomb!");
                 break;
             case 1:
                 Stun++;
-                Debug.Log("Got Stun Projectile!");
+                //Debug.Log("Got Stun Projectile!");
                 break;
             case 2:
                 Shield++;
-                Debug.Log("Got Shield!");
+                //Debug.Log("Got Shield!");
                 break;
             default:
                 break;
@@ -85,7 +89,6 @@ public class InteractableManager : Singleton<InteractableManager>
             AddWeapon(Random.Range(0, 3));
         }
         
-      
     }
 
     public void OnInteractableItemClicked(int index)
@@ -106,7 +109,15 @@ public class InteractableManager : Singleton<InteractableManager>
                 {
                     Stun--;
                     GameObject stunGO = Instantiate(stunPrefab, playerTransform.position, Quaternion.identity);
+                    int tempTeam = (int)GetPlayerTeamEvent?.Invoke();
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        stunGO.transform.GetChild(i).GetComponent<Projectile>().SetUpProjectile(tempTeam);
+                    }
                     stunGO.SetActive(true);
+
+
                 }
                 break;
             case 2:

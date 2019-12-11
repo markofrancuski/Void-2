@@ -28,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4986169749136618928}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10.02, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4986169750129797324}
@@ -145,6 +145,7 @@ MonoBehaviour:
   speed: 100
   rigidBody: {fileID: 4986169749136618942}
   direction: {x: 1, y: 0}
+  Team: 0
 --- !u!1 &4986169749671537558
 GameObject:
   m_ObjectHideFlags: 0
@@ -173,7 +174,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4986169749671537558}
   m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: -10.02, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4986169750129797324}
@@ -290,6 +291,7 @@ MonoBehaviour:
   speed: 100
   rigidBody: {fileID: 4986169749671537557}
   direction: {x: -1, y: 0}
+  Team: 0
 --- !u!1 &4986169750129797327
 GameObject:
   m_ObjectHideFlags: 0
@@ -352,7 +354,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4986169750181203265}
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -10.02, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4986169750129797324}
@@ -469,6 +471,7 @@ MonoBehaviour:
   speed: 100
   rigidBody: {fileID: 4986169750181203276}
   direction: {x: 0, y: 1}
+  Team: 0
 --- !u!1 &4986169750780706351
 GameObject:
   m_ObjectHideFlags: 0
@@ -497,7 +500,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4986169750780706351}
   m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -10.02, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4986169750129797324}
@@ -614,3 +617,4 @@ MonoBehaviour:
   speed: 100
   rigidBody: {fileID: 4986169750780706346}
   direction: {x: 0, y: -1}
+  Team: 0

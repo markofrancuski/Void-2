@@ -18,7 +18,7 @@ public class InputManager : MonoBehaviour
     public static event OnSwiped OnSwipedEvent;
 
     //Fetch the PlayerState for checking input
-    public delegate PlayerState OnPlayerStateCheck();
+    public delegate PersonState OnPlayerStateCheck();
     public static event OnPlayerStateCheck OnPlayerStateCheckEvent;
 
     #endregion
@@ -26,7 +26,43 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void Update() // Maybe fixedUpdate
     {
-        if(OnPlayerStateCheckEvent.Invoke() != PlayerState.DEAD) CheckTouchInput();
+#if UNITY_EDITOR
+        if (OnPlayerStateCheckEvent.Invoke() != PersonState.DEAD) CheckEditorInput();
+#endif
+        if (OnPlayerStateCheckEvent.Invoke() != PersonState.DEAD) CheckTouchInput();
+    }
+
+    public bool isPressed = false;
+    public Vector3 startPos;
+    public Vector3 endPos;
+    public Vector3 swipeDire;
+
+    void CheckEditorInput()
+    {
+
+        if (isPressed)
+        {
+            if(Input.GetMouseButtonUp(0))
+            {
+                endPos = Input.mousePosition;
+
+                swipeDire = (endPos - startPos).normalized;
+                if (swipeDire.x >= swipeSensitivity) AddMovement("RIGHT");
+                else if (swipeDire.x <= -swipeSensitivity) AddMovement("LEFT");
+                else if (swipeDire.y >= swipeSensitivity) AddMovement("UP");
+                else if (swipeDire.y <= -swipeSensitivity) AddMovement("DOWN");
+
+                isPressed = false;
+            }
+        }
+        else
+        {
+            if(Input.GetMouseButtonDown(0))
+            {
+                isPressed = true;
+                startPos = Input.mousePosition;
+            }
+        }
     }
 
     void CheckTouchInput()

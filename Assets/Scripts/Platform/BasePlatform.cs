@@ -10,36 +10,43 @@ public class BasePlatform : MonoBehaviour, IDestroyable
     public delegate void RecalculateDistanceEvent();
     private event RecalculateDistanceEvent OnRecalculateDistanceEvent;
 
-    public virtual void Interact(PlayerController controller)
+    public virtual void Interact(Person controller)
     {
-        Debug.Log("Landed on Normal platform");
+        PrintObjectInterating(controller, "Normal");
+
         if (controller.IsFreeFall && controller.isDeadFromFall)
         {
             controller.Death();
         }
-        controller.currentPlayerState = PlayerState.IDLE;
+        if (controller.currentState != PersonState.STUNNED && controller.currentState != PersonState.DEAD) controller.currentState = PersonState.IDLE;
         controller.IsFreeFall = false;
     }
 
     #region UNITY FUNCTIONS
 
-    PlayerController controller;
+    public void PrintObjectInterating(Person controller, string platformName)
+    {
+        Debug.Log($"Object: {controller.gameObject.name} is interacting with {platformName} platform!");
+    }
+
+    Person controller;
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.collider.CompareTag("Player"))
+        if(collision.collider.CompareTag("Player") || collision.collider.CompareTag("AI"))
         {
-            controller = collision.collider.GetComponent<PlayerController>();
+            controller = collision.collider.GetComponent<Person>();
             Interact(controller);
             OnFreeFallPlayerHandler += controller.EnterInFreeFall;
         }
+
     }
 
     public void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.collider.CompareTag("Player"))
+        if (collision.collider.CompareTag("Player") || collision.collider.CompareTag("AI"))
         {
-            PlayerController controller = collision.collider.GetComponent<PlayerController>();
+            Person controller = collision.collider.GetComponent<Person>();
             OnFreeFallPlayerHandler -= controller.EnterInFreeFall;
         }
     }
@@ -56,9 +63,10 @@ public class BasePlatform : MonoBehaviour, IDestroyable
     private void OnDisable()
     {
         UnsubscribeSurroundingPlatforms();
+        //If player is on platform and platform gets destroyed => change to true
         if(controller != null)
         {
-            controller.IsFreeFall
+            controller.IsFreeFall = true;
         }
     }
 

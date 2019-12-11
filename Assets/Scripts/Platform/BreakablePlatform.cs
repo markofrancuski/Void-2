@@ -11,9 +11,9 @@ public class BreakablePlatform : BasePlatform
         gameObject.SetActive(true);
     }
 
-    public override void Interact(PlayerController controller)
+    public override void Interact(Person controller)
     {
-
+        PrintObjectInterating(controller, "Breakable");
         if (controller.IsFreeFall)
         {
             //controller.AddFirstMove("DOWN");
@@ -28,7 +28,7 @@ public class BreakablePlatform : BasePlatform
     {
         if(collision.CompareTag("Player"))
         {
-            Interact(collision.GetComponent<PlayerController>());
+            Interact(collision.GetComponent<Person>());
         }
     }
 

@@ -21,7 +21,7 @@ public class Bomb : MonoBehaviour
         hits = Physics2D.RaycastAll(transform.position, Vector2.up, 2); // verticalSize
         foreach (RaycastHit2D hit in hits)
         {
-            if (hit.collider.CompareTag("Platform") || hit.collider.CompareTag("Player")) hit.collider.gameObject.GetComponent<IDestroyable>().DestroyObject();
+            if (hit.collider.CompareTag("Platform") || hit.collider.CompareTag("Player") ) hit.collider.gameObject.GetComponent<IDestroyable>().DestroyObject();
         }
 
         hits = Physics2D.RaycastAll(transform.position, Vector2.down, 2.3f); // verticalSize + 0,3f
