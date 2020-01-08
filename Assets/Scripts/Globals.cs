@@ -17,13 +17,14 @@ public class Globals : Singleton<Globals>
 
     public float tweenDuration = 0.5f;
 
-    [SerializeField] private Transform TerrainObject;
+    public Transform TerrainObject;
 
     private void Start()
     {
         Invoke("RetrieveMove", .15f);
     }
-    void RetrieveMove()
+
+    public void RetrieveMove()
     {
         Level levelScript = TerrainObject.GetChild(0).GetComponent<Level>();
         movePaceHorizontal = levelScript.moveX;

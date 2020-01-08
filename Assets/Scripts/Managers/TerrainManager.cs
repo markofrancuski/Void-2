@@ -7,7 +7,6 @@ public class TerrainManager : MonoBehaviour
     public float moveX;
     public float moveY;
 
-    public static TerrainManager instance;
     [SerializeField] private List<GameObject> prefabs = new List<GameObject>();
     [SerializeField] private Vector3 currentPosition = Vector3.zero;
     [SerializeField] private Transform parentTerrain;
@@ -16,30 +15,31 @@ public class TerrainManager : MonoBehaviour
 
     public List<GameObject> spawnedLevels;
 
-    private void Awake() 
-    {
-        instance = this;
-    }
-
     private void Start() 
     {
         cameraSize = Camera.main.orthographicSize*2;
 
-        SpawnNextChuck(true);
-
+        SpawnLevel(true, 0);
 
     }
 
 
     private void FixedUpdate() 
     {
-         if(spawnedLevels.Count <= 2) SpawnNextChuck(false);
+         //if(spawnedLevels.Count <= 2) SpawnNextChuck(false);
     }
 
-    public void SpawnNextChuck(bool isStart)
+    public void SpawnLevel(bool isStart, int levelIndex)
     {
-        
-        for (int i = 0; i < prefabs.Count; i++)
+        //if (!isStart) currentPosition = spawnedLevels[spawnedLevels.Count - 1].transform.position + new Vector3(0, cameraSize - Time.deltaTime, 0); // -0.03f => Time.deltaTime
+        GameObject go = Instantiate(prefabs[levelIndex]);
+        go.transform.SetParent(parentTerrain);
+        go.transform.position = currentPosition;
+
+        currentPosition += new Vector3(0, cameraSize, 0);
+        spawnedLevels.Add(go);
+
+        /*for (int i = 0; i < prefabs.Count; i++)
         {
             if(!isStart) currentPosition = spawnedLevels[spawnedLevels.Count-1].transform.position + new Vector3(0,cameraSize - Time.deltaTime, 0); // -0.03f => Time.deltaTime
             GameObject go = Instantiate(prefabs[i]);
@@ -49,5 +49,6 @@ public class TerrainManager : MonoBehaviour
             currentPosition += new Vector3(0, cameraSize, 0);
             spawnedLevels.Add(go);
         }
+        */
     }
 }

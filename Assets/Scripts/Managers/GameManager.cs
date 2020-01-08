@@ -42,9 +42,9 @@ public class GameManager : Singleton<GameManager>
 
     private void Start()
     {
-        coinValueText.SetText(coinValue.currentValue.ToString());
+        //coinValueText.SetText(coinValue.currentValue.ToString());
 
-        UpdateExtralifeImage();
+        //UpdateExtralifeImage();
     }
 
     void UpdateExtralifeImage()

@@ -22,9 +22,9 @@ public class InteractableManager : Singleton<InteractableManager>
     [SerializeField] private Transform playerTransform;
     private void Start()
     {
-        bombText.SetText(bomb.ToString());
-        stunText.SetText(stun.ToString());
-        shieldText.SetText(shield.ToString());
+        //bombText.SetText(bomb.ToString());
+        //stunText.SetText(stun.ToString());
+        //shieldText.SetText(shield.ToString());
     }
 
     [SerializeField] private int bomb;

@@ -29,7 +29,7 @@ public class InputManager : Singleton<InputManager>
     {
 
     #if UNITY_EDITOR
-            if (OnPlayerStateCheckEvent.Invoke() != PersonState.DEAD) CheckEditorInput();
+            //if (OnPlayerStateCheckEvent.Invoke() != PersonState.DEAD) CheckEditorInput();
     #else
             if (OnPlayerStateCheckEvent.Invoke() != PersonState.DEAD) CheckTouchInput();
     #endif

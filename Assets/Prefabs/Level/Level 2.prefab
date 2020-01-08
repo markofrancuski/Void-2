@@ -120,7 +120,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1296323572475fe4798124b1ca4fbf80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  platformType: 0
+  distanceFromUpperPlatform: 0
+  distanceFromUnderneathPlatfrom: 0
 --- !u!1 &369643267171912882
 GameObject:
   m_ObjectHideFlags: 0
@@ -1480,7 +1481,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
     newSize: {x: 0.5, y: 0.5}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -1917,7 +1918,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4785c2d5222b9f4fa1cbdb318c1cb47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  platformType: 3
+  distanceFromUpperPlatform: 0
+  distanceFromUnderneathPlatfrom: 0
 --- !u!1 &2338516754256844449
 GameObject:
   m_ObjectHideFlags: 0
@@ -2227,7 +2229,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9a382c4e45f22d4eb78c76d400055a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  platformType: 2
+  distanceFromUpperPlatform: 0
+  distanceFromUnderneathPlatfrom: 0
 --- !u!1 &2434152946463601963
 GameObject:
   m_ObjectHideFlags: 0
@@ -2562,7 +2565,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1296323572475fe4798124b1ca4fbf80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  platformType: 0
+  distanceFromUpperPlatform: 0
+  distanceFromUnderneathPlatfrom: 0
 --- !u!1 &2872515790141087150
 GameObject:
   m_ObjectHideFlags: 0
@@ -3988,7 +3992,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1296323572475fe4798124b1ca4fbf80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  platformType: 0
+  distanceFromUpperPlatform: 0
+  distanceFromUnderneathPlatfrom: 0
 --- !u!1 &4436327486516681094
 GameObject:
   m_ObjectHideFlags: 0
@@ -4466,7 +4471,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
     newSize: {x: 0.5, y: 0.5}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -5485,6 +5490,9 @@ MonoBehaviour:
   moveX: 0
   moveY: 0
   speed: 0
+  maxMoves: 10
+  playerInitPosition: {fileID: 0}
+  heartsToCollect: 3
 --- !u!1 &6218131468125647358
 GameObject:
   m_ObjectHideFlags: 0
@@ -5605,7 +5613,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9a382c4e45f22d4eb78c76d400055a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  platformType: 2
+  distanceFromUpperPlatform: 0
+  distanceFromUnderneathPlatfrom: 0
 --- !u!1 &6483474017763794611
 GameObject:
   m_ObjectHideFlags: 0
@@ -6104,7 +6113,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4caf29c0201d0ce4c80f2c9a9732974f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  platformType: 1
+  distanceFromUpperPlatform: 0
+  distanceFromUnderneathPlatfrom: 0
 --- !u!1 &6938224850179893252
 GameObject:
   m_ObjectHideFlags: 0
@@ -6225,7 +6235,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1296323572475fe4798124b1ca4fbf80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  platformType: 0
+  distanceFromUpperPlatform: 0
+  distanceFromUnderneathPlatfrom: 0
 --- !u!1 &7032191379470600360
 GameObject:
   m_ObjectHideFlags: 0
@@ -6792,7 +6803,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
     newSize: {x: 0.5, y: 0.5}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -6933,7 +6944,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1296323572475fe4798124b1ca4fbf80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  platformType: 0
+  distanceFromUpperPlatform: 0
+  distanceFromUnderneathPlatfrom: 0
 --- !u!1 &8430194085402822647
 GameObject:
   m_ObjectHideFlags: 0
@@ -7136,7 +7148,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1296323572475fe4798124b1ca4fbf80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  platformType: 0
+  distanceFromUpperPlatform: 0
+  distanceFromUnderneathPlatfrom: 0
 --- !u!1 &8674870518511823747
 GameObject:
   m_ObjectHideFlags: 0

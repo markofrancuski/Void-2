@@ -210,12 +210,13 @@ public class Level : MonoBehaviour
 
     private void OnDisable() 
     {       
-        TerrainManager.instance.spawnedLevels.Remove(gameObject);
+        //TerrainManager.instance.spawnedLevels.Remove(gameObject);
+        LevelManager.OnResetLevelEventHandler -= ResetLevel;
     }
 
     private void OnEnable()
     {
-        OnResetLevelEventHandler += ResetLevel;
+        LevelManager.OnResetLevelEventHandler += ResetLevel;
         StartLevel();
     }
 

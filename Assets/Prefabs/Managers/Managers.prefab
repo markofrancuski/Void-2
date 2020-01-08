@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5054956627173092015
 Transform:
   m_ObjectHideFlags: 0
@@ -96,7 +96,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 281b9ede2e7cd2842a1685a61986b73f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dontDestroyOnLoad: 0
+  _dontDestroyOnLoad: 1
   playerTransform: {fileID: 0}
   bomb: 0
   stun: 0
@@ -164,7 +164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d6e41f8b1bf78b45b8babbea655691e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dontDestroyOnLoad: 0
+  _dontDestroyOnLoad: 1
   swipeSensitivity: 0.5
   isPressed: 0
   startPos: {x: 0, y: 0, z: 0}
@@ -226,7 +226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c73140f826926d46a641cb29ffdd6d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dontDestroyOnLoad: 0
+  _dontDestroyOnLoad: 1
   movePaceVertical: 0
   movePaceHorizontal: 0
   upVector: {x: 0, y: 0, z: 0}
@@ -329,7 +329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1eaa837ca17dc6a4f9860f807472b5f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dontDestroyOnLoad: 0
+  _dontDestroyOnLoad: 1
   gameOverPanel: {fileID: 0}
   revivePanel: {fileID: 0}
   extraLifeImage: {fileID: 0}
@@ -391,8 +391,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa8be070f35875f4f84202bb1fe36f3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dontDestroyOnLoad: 0
+  _dontDestroyOnLoad: 1
   currentLevel: 0
+  maxMoves: 0
+  heartToCollect: 0
 --- !u!114 &5054956628583441826
 MonoBehaviour:
   m_ObjectHideFlags: 0
