@@ -26,10 +26,12 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void Update() // Maybe fixedUpdate
     {
-#if UNITY_EDITOR
-        if (OnPlayerStateCheckEvent.Invoke() != PersonState.DEAD) CheckEditorInput();
-#endif
-        if (OnPlayerStateCheckEvent.Invoke() != PersonState.DEAD) CheckTouchInput();
+
+    #if UNITY_EDITOR
+            if (OnPlayerStateCheckEvent.Invoke() != PersonState.DEAD) CheckEditorInput();
+    #else
+            if (OnPlayerStateCheckEvent.Invoke() != PersonState.DEAD) CheckTouchInput();
+    #endif
     }
 
     public bool isPressed = false;
@@ -85,25 +87,21 @@ public class InputManager : MonoBehaviour
                 if (swipeDirection.x >= swipeSensitivity)
                 {
                     AddMovement("RIGHT");
-
                 }
 
                 else if (swipeDirection.x <= -swipeSensitivity)
                 {
                     AddMovement("LEFT");
-
                 }
 
                 else if (swipeDirection.y >= swipeSensitivity)
                 {
                     AddMovement("UP");
-
                 }
 
                 else if (swipeDirection.y <= -swipeSensitivity)
                 {
                     AddMovement("DOWN");
-
                 }
 
             }
@@ -114,7 +112,7 @@ public class InputManager : MonoBehaviour
     {
         // Alert subscribed methods if its not null
         OnSwipedEvent?.Invoke(str);
-        //OnSwipedEvent?.Invoke(str);
+        
     }
 
 }

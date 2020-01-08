@@ -4,8 +4,6 @@ using UnityEngine;
 using Pixelplacement;
 using MEC;
 
-
-
 public class PlayerController : Person, IDestroyable
 {
 
@@ -334,6 +332,8 @@ public class PlayerController : Person, IDestroyable
     
     public override void Death()
     {
+        base.Death();
+
         OnPlayerDieEvent?.Invoke();
 
         if ( !IsExtraLifeActive )

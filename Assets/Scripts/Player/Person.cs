@@ -128,7 +128,7 @@ public class Person : MonoBehaviour
 
     public virtual void Death()
     {
-
+        currentState = PersonState.DEAD;
     }
 
     public virtual void HandleTweenStarted()
