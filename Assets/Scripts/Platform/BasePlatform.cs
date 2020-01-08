@@ -64,10 +64,7 @@ public class BasePlatform : MonoBehaviour, IDestroyable
     {
         UnsubscribeSurroundingPlatforms();
         //If player is on platform and platform gets destroyed => change to true
-        if(controller != null)
-        {
-            controller.IsFreeFall = true;
-        }
+        if(controller != null) controller.IsFreeFall = true;
     }
 
     #endregion

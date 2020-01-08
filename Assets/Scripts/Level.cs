@@ -16,11 +16,15 @@ public class Level : MonoBehaviour
     [SerializeField] private float speed;
     private float disablePoint;
 
+    public int maxMoves;
+    public Transform playerInitPosition;
+    public int heartsToCollect;
+
     private void Start() 
     {
         //Calculates the position Y so that terrain can disable itself when it reaches the position Y
         disablePoint = -(Camera.main.orthographicSize * 2);
-        StartLevel();
+
     }
 
     private void FixedUpdate() 
@@ -207,5 +211,16 @@ public class Level : MonoBehaviour
     private void OnDisable() 
     {       
         TerrainManager.instance.spawnedLevels.Remove(gameObject);
+    }
+
+    private void OnEnable()
+    {
+        OnResetLevelEventHandler += ResetLevel;
+        StartLevel();
+    }
+
+    private void ResetLevel()
+    {
+        StartLevel();
     }
 }

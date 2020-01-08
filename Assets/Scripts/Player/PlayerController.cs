@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Pixelplacement;
 using MEC;
+using UnityEngine.Events;
 
 public class PlayerController : Person, IDestroyable
 {
@@ -148,11 +149,14 @@ public class PlayerController : Person, IDestroyable
         shieldBarrierGO.SetActive(false);
     }
     
-    IEnumerator _InteractableCoroutine(float time)
+    IEnumerator _InteractableCoroutine(float time, UnityAction interactMethod)
     {
         currentState = PersonState.INTERACTING;
+        // InteractEvent += interactMethod;
+        // InteractEvent?.Invoke();
         yield return new WaitForSeconds(time);
         currentState = PersonState.IDLE;
+        // InteractEvent -= interactMethod;
     }
 
     #endregion

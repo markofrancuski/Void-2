@@ -18,6 +18,7 @@ public class LevelEditor : EditorWindow
     [SerializeField] private Sprite platformHaySprite;
     [SerializeField] private Sprite platformSpikeSprite;
     [SerializeField] private Sprite platformSlideSprite;
+    [SerializeField] private Sprite platformDoubleSprite;
 
     [SerializeField] private Sprite coinSprite;
     [SerializeField] private Sprite heartSprite;
@@ -29,6 +30,7 @@ public class LevelEditor : EditorWindow
     [SerializeField] private Texture platformHayTexture;
     [SerializeField] private Texture platformSpikeTexture;
     [SerializeField] private Texture platformSlideTexture;
+    [SerializeField] private Texture platformDoubleTexture;
 
     [SerializeField] private Texture coinTexture;
     [SerializeField] private Texture heartTexture;
@@ -42,8 +44,9 @@ public class LevelEditor : EditorWindow
      private int selectedPlatformIndex;*/
     private PlatformType selectedPlatformType;
     private PickableType selectedPickableType;
-    
-    #endregion 
+
+    #endregion
+
     private Dictionary<int, PlatformInfo> dictionary = new Dictionary<int, PlatformInfo>();
 
     private void Awake() 
@@ -70,6 +73,7 @@ public class LevelEditor : EditorWindow
         platformHayTexture = Resources.Load<Texture>("Sprites/Platforms/HayPlatform");
         platformSpikeTexture = Resources.Load<Texture>("Sprites/Platforms/SpikePlatform");
         platformSlideTexture = Resources.Load<Texture>("Sprites/Platforms/SlidePlatform");
+        platformDoubleTexture = Resources.Load<Texture>("Sprites/Platforms/DoublePlatform");
 
         coinTexture = Resources.Load<Texture>("Sprites/Pickables/Coin");
         heartTexture = Resources.Load<Texture>("Sprites/Pickables/Heart 1");
@@ -201,8 +205,17 @@ public class LevelEditor : EditorWindow
                         //if(isPlatformClick) isPlatformClick = false;
 
                         //selectedPlatformIndex = buttonIndex;
-                        dictionary[buttonIndex].ChangePickable(selectedPickableType);
+                        //dictionary[buttonIndex].ChangePickable(selectedPickableType);
                         //isPickableClick = true;
+
+                        if (selectedPickableType == PickableType.NONE && dictionary[buttonIndex].GetPlatformType() == PlatformType.NONE)
+                        {
+                            dictionary.Remove(buttonIndex);
+                        }
+                        else
+                        {
+                            dictionary[buttonIndex].ChangePickable(selectedPickableType);
+                        }
                     }
                 }
                 else
@@ -221,9 +234,19 @@ public class LevelEditor : EditorWindow
                     if(GUI.Button(new Rect(initialPosX + boxSize2 / 2 - 41, initialPosY + boxSize2 / 2 + 5, buttonSize * 3, buttonSize), GetPlatformTexture(dictionary[buttonIndex].GetPlatformType()) ))
                     {
                         //if(isPickableClick) isPickableClick = false;
-                        //isPlatformClick = true;
+                        
                         //selectedPlatformIndex = buttonIndex;
-                        dictionary[buttonIndex].ChangePlatform(selectedPlatformType);
+                        //dictionary[buttonIndex].ChangePlatform(selectedPlatformType);
+                        //isPlatformClick = true;
+
+                        if (selectedPlatformType == PlatformType.NONE && dictionary[buttonIndex].GetPickableType() == PickableType.NONE)
+                        {
+                            dictionary.Remove(buttonIndex);
+                        }
+                        else
+                        {
+                            dictionary[buttonIndex].ChangePlatform(selectedPlatformType);
+                        }
                     }
                 }
                 else
@@ -329,6 +352,7 @@ public class LevelEditor : EditorWindow
     }
 
     #region Helper Functions
+
     private void AttachInteractableScript(PickableType pickableType, GameObject go)
     {
         go.GetComponent<BoxCollider2D>().size = Vector2.one;
@@ -416,7 +440,8 @@ public class LevelEditor : EditorWindow
 
             case PlatformType.SLIDE: return platformSlideTexture;
             case PlatformType.SPIKE: return platformSpikeTexture;
-            case PlatformType.DOUBLE: return platformNormalTexture;
+            case PlatformType.DOUBLE: return platformDoubleTexture;
+
             case PlatformType.NONE: return defaultTexture;
             default: return defaultTexture;
         }

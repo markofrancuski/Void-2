@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
+using Pixelplacement;
 
-public class Globals : MonoBehaviour
+public class Globals : Singleton<Globals>
 {
-    public static Globals Instance;
-
 
     public float movePaceVertical;
     public float movePaceHorizontal;
@@ -20,12 +19,6 @@ public class Globals : MonoBehaviour
 
     [SerializeField] private Transform TerrainObject;
 
-
-    private void Awake()
-    {
-        Instance = this;
-
-    }
     private void Start()
     {
         Invoke("RetrieveMove", .15f);
