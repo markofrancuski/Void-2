@@ -19,6 +19,9 @@ public class Globals : Singleton<Globals>
 
     public Transform TerrainObject;
 
+    public int currentChapter;
+    public int currentLevel;
+
     private void Start()
     {
         Invoke("RetrieveMove", .15f);

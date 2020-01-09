@@ -8,6 +8,7 @@ TagManager:
   - Projectile
   - AI
   - Terrain
+  - Boundary
   layers:
   - Default
   - TransparentFX

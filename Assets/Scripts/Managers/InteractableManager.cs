@@ -31,21 +31,21 @@ public class InteractableManager : Singleton<InteractableManager>
     public int Bomb
     {
         get { return bomb; }
-        set { bomb = value; bombText.SetText(bomb.ToString()); }
+        set { bomb = value; if(bombText != null) bombText.SetText(bomb.ToString()); }
     }
 
     [SerializeField] private int stun;
     public int Stun
     {
         get { return stun; }
-        set { stun = value; stunText.SetText(stun.ToString()); }
+        set { stun = value; if(stunText != null) stunText.SetText(stun.ToString()); }
     }
 
     [SerializeField] private int shield;
     public int Shield
     {
         get { return shield; }
-        set { shield = value; shieldText.SetText(shield.ToString()); }
+        set { shield = value; if(shieldText != null) shieldText.SetText(shield.ToString()); }
     }
 
     [SerializeField] private TextMeshProUGUI bombText;

@@ -11,6 +11,8 @@ public class InputManager : Singleton<InputManager>
     private Vector2 startTouchPosition;
     private Vector3 swipeDirection;
     [SerializeField] private float swipeSensitivity;
+
+    [SerializeField] private bool isControllable = false;
     #endregion
 
     #region SWIPE EVENT
@@ -27,9 +29,9 @@ public class InputManager : Singleton<InputManager>
     // Update is called once per frame
     void Update() // Maybe fixedUpdate
     {
-
+        if (!isControllable) return;
     #if UNITY_EDITOR
-            //if (OnPlayerStateCheckEvent.Invoke() != PersonState.DEAD) CheckEditorInput();
+            if (OnPlayerStateCheckEvent.Invoke() != PersonState.DEAD) CheckEditorInput();
     #else
             if (OnPlayerStateCheckEvent.Invoke() != PersonState.DEAD) CheckTouchInput();
     #endif
@@ -116,4 +118,7 @@ public class InputManager : Singleton<InputManager>
         
     }
 
+    public void ControlPlayer() => isControllable = true;
+
+    public void UnControlPlayer() => isControllable = false;
 }

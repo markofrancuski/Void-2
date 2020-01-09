@@ -5111,6 +5111,11 @@ MonoBehaviour:
   moveX: 0
   moveY: 0
   speed: 0
+  maxMoves: 10
+  heartsToCollect: 3
+  playerObject: {fileID: 3755409253481136197, guid: 94c7a825c88d5db459b6980eb3b23a3b,
+    type: 3}
+  playerStartingPosition: {x: 0, y: 0}
 --- !u!1 &6440242669742135610
 GameObject:
   m_ObjectHideFlags: 0

@@ -55,9 +55,8 @@ public class GameManager : Singleton<GameManager>
 
     private void OnPlayerDeath()
     {
-        if( (bool) CheckPlayerLifeSaverEvent?.Invoke()) revivePanel.SetActive(true);
-        else gameOverPanel.SetActive(true);
-     
+        if ((bool)CheckPlayerLifeSaverEvent?.Invoke()) Debug.Log("Player is dead => Revive player");//revivePanel.SetActive(true);
+        else Debug.Log("Player is dead => gameOver");//gameOverPanel.SetActive(true);
     }
 
     public void OnReviveButtonClick()

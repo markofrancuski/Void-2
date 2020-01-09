@@ -19,20 +19,20 @@ public class TerrainManager : MonoBehaviour
     {
         cameraSize = Camera.main.orthographicSize*2;
 
-        SpawnLevel(true, 0);
-
+        SpawnLevel(true);
     }
-
 
     private void FixedUpdate() 
     {
          //if(spawnedLevels.Count <= 2) SpawnNextChuck(false);
     }
 
-    public void SpawnLevel(bool isStart, int levelIndex)
+    public void SpawnLevel(bool isStart)
     {
         //if (!isStart) currentPosition = spawnedLevels[spawnedLevels.Count - 1].transform.position + new Vector3(0, cameraSize - Time.deltaTime, 0); // -0.03f => Time.deltaTime
-        GameObject go = Instantiate(prefabs[levelIndex]);
+        GameObject go;
+        if (Globals.Instance.currentLevel == -1) { go = Instantiate(prefabs[0]); }
+        else { go = Instantiate(prefabs[Globals.Instance.currentLevel]); }
         go.transform.SetParent(parentTerrain);
         go.transform.position = currentPosition;
 

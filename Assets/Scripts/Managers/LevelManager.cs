@@ -1,57 +1,99 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Pixelplacement;
-using UnityEngine.SceneManagement;
-using MEC;
 using TMPro;
+using Pixelplacement;
 
 public class LevelManager : Singleton<LevelManager>
 {
-    public delegate void ResetLevelEvent();
-    public static event ResetLevelEvent OnResetLevelEventHandler;
 
     [Header("Current Level Settings")]
-    [SerializeField] private int currentLevel;
+    [SerializeField] private int currentChapter;
     public int maxMoves;
-    private int tempMaxMoves;
+    [SerializeField] private int tempMaxMoves;
 
     public int heartToCollect;
-    private int tempHeartToCollect;
+    [SerializeField] private int tempHeartToCollect;
 
-    public TextMeshProUGUI movesText;
-    public TextMeshProUGUI heartsText;
+    [SerializeField] private TextMeshProUGUI movesText;
+    [SerializeField] private TextMeshProUGUI heartsText;
 
+    #region Unity Functions
 
-    public void ResetLevel()
+    private void Start()
     {
-        OnResetLevelEventHandler?.Invoke();
+        UpdateMoves();
+        UpdateHearts();
+        
+        InputManager.Instance.ControlPlayer();
+       
     }
 
-    public void LoadLevel(int levelIndex)
+    private void OnEnable()
     {
-        currentLevel = levelIndex;
-        Timing.RunCoroutine(_LoadAsyncLevel(currentLevel));
+        InputManager.OnSwipedEvent += ReduceMoves;
+        CanvasManager.OnResetLevelEventHandler += ResetLevel;
+
+        tempMaxMoves = maxMoves;
+        tempHeartToCollect = heartToCollect;
+        
     }
 
-    private IEnumerator<float> _LoadAsyncLevel(int indexLevel)
+    private void OnDisable()
     {
-        SceneManager.sceneLoaded += SceneManager_sceneLoaded;
+        InputManager.OnSwipedEvent -= ReduceMoves;
+        CanvasManager.OnResetLevelEventHandler -= ResetLevel;
+    }
 
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(indexLevel);
+    #endregion
 
-        // Wait until the asynchronous scene fully loads
-        while (!asyncLoad.isDone)
+    public void ReduceMoves(string t)
+    {
+        Debug.Log("Called");
+        tempMaxMoves--;
+        UpdateMoves();
+        if (tempMaxMoves <= 0)
         {
-            yield return Timing.WaitForOneFrame;
+            InputManager.Instance.UnControlPlayer();
+
+            if (tempHeartToCollect <= 0)
+            {
+                //Level Passed
+                CanvasManager.Instance.UpdatePanel( NextLevel , false, -1);
+                //Invoke 
+                return;
+            }
+
+            // You didn't pass the level => Out of moves!
+            CanvasManager.Instance.UpdatePanel( ResetLevel , true, 0);
+            // Invoke option to reset level
+
         }
     }
 
-    private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
+    #region UI functions
+
+    private void UpdateMoves() => movesText.SetText(tempMaxMoves.ToString());
+    private void UpdateHearts() => heartsText.SetText(tempHeartToCollect.ToString());
+
+
+
+    
+
+    private void ResetLevel()
     {
-        Debug.Log("Chapter Loaded!");
-        CanvasManager.Instance.HideMainMenu();
-        SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
+        tempMaxMoves = maxMoves;
+        tempHeartToCollect = heartToCollect;
+        CanvasManager.Instance.ResetLevel();
+        //ResetLevel
+
     }
+
+    private void NextLevel()
+    {
+
+    }
+
+    #endregion
 
 }

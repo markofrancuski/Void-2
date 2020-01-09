@@ -16,14 +16,23 @@ public class Level : MonoBehaviour
     [SerializeField] private float speed;
     private float disablePoint;
 
+    [Header("Level Information")]
     public int maxMoves;
-    public Transform playerInitPosition;
     public int heartsToCollect;
+
+    public GameObject playerObject;
+    public Vector2 playerSP;
 
     private void Start() 
     {
         //Calculates the position Y so that terrain can disable itself when it reaches the position Y
         disablePoint = -(Camera.main.orthographicSize * 2);
+
+        if (playerObject != null)
+        {
+            GameObject playerGO = Instantiate(playerObject);
+            playerGO.transform.position = new Vector3(playerSP.x * Globals.Instance.movePaceHorizontal, playerSP.y * Globals.Instance.movePaceVertical);
+        }
 
     }
 
@@ -211,13 +220,15 @@ public class Level : MonoBehaviour
     private void OnDisable() 
     {       
         //TerrainManager.instance.spawnedLevels.Remove(gameObject);
-        LevelManager.OnResetLevelEventHandler -= ResetLevel;
+        //LevelManager.OnResetLevelEventHandler -= ResetLevel;
     }
 
     private void OnEnable()
     {
-        LevelManager.OnResetLevelEventHandler += ResetLevel;
+        //LevelManager.OnResetLevelEventHandler += ResetLevel;
         StartLevel();
+        LevelManager.Instance.maxMoves = maxMoves;
+        LevelManager.Instance.heartToCollect = heartsToCollect;
     }
 
     private void ResetLevel()

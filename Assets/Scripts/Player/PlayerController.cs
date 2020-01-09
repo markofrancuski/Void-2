@@ -51,6 +51,9 @@ public class PlayerController : Person, IDestroyable
 
     private void OnEnable()
     {
+        OnPlayerDieEvent += CanvasManager.Instance.Death;
+
+        currentState = PersonState.IDLE;
         SlidePlatform.OnSlidePlatformInteractEvent += AddFirstMove;
 
         InputManager.OnSwipedEvent += AddMove;
@@ -64,12 +67,15 @@ public class PlayerController : Person, IDestroyable
         GameManager.CheckPlayerLifeSaverEvent += GetLifeSaver;
         GameManager.ReviveButtonClickedEvent += ChangePlayerExtraLife;
         GameManager.ReviveButtonClickedEvent += OnReviveClick;
+
         //Test
         GameManager.ResetSceneEvent += () => { IsExtraLifeActive.currentValue = true; };
     }
 
     private void OnDisable()
     {
+        OnPlayerDieEvent -= CanvasManager.Instance.Death;
+
         SlidePlatform.OnSlidePlatformInteractEvent -= AddFirstMove;
 
         InputManager.OnSwipedEvent -= AddMove;
@@ -89,9 +95,16 @@ public class PlayerController : Person, IDestroyable
 
     private void OnBecameInvisible()
     {
-        Death();
+        //Death();
     }
 
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if(collision.CompareTag("Boundary"))
+        {
+            Death();
+        }
+    }
     #endregion
 
     #region CHARACTER INTERACTION VARIABLES
