@@ -77,7 +77,7 @@ public class GameManager : Singleton<GameManager>
     public void AddCoins(int amount)
     {
         coinValue.currentValue += amount;
-        coinValueText.SetText(coinValue.currentValue.ToString());
+        if(coinValueText != null) coinValueText.SetText(coinValue.currentValue.ToString());
     }
 
 
