@@ -9,12 +9,14 @@ public class LevelManager : Singleton<LevelManager>
 
     [Header("Current Level Settings")]
     [SerializeField] private int currentChapter;
+
     public int maxMoves;
     [SerializeField] private int tempMaxMoves;
 
     public int heartToCollect;
-    [SerializeField] private int tempHeartToCollect;
+    [SerializeField] private int tempHeartToCollect = 0;
 
+    [Header("UI References")]
     [SerializeField] private TextMeshProUGUI movesText;
     [SerializeField] private TextMeshProUGUI heartsText;
 
@@ -22,17 +24,20 @@ public class LevelManager : Singleton<LevelManager>
 
     private void Start()
     {
+        tempHeartToCollect = 0;
+
         UpdateMoves();
         UpdateHearts();
         
         InputManager.Instance.ControlPlayer();
+
        
     }
 
     private void OnEnable()
     {
         InputManager.OnSwipedEvent += ReduceMoves;
-        CanvasManager.OnResetLevelEventHandler += ResetLevel;
+        
 
         tempMaxMoves = maxMoves;
         tempHeartToCollect = heartToCollect;
@@ -42,7 +47,7 @@ public class LevelManager : Singleton<LevelManager>
     private void OnDisable()
     {
         InputManager.OnSwipedEvent -= ReduceMoves;
-        CanvasManager.OnResetLevelEventHandler -= ResetLevel;
+        
     }
 
     #endregion
@@ -59,16 +64,21 @@ public class LevelManager : Singleton<LevelManager>
             if (tempHeartToCollect <= 0)
             {
                 //Level Passed
-                CanvasManager.Instance.UpdatePanel( NextLevel , false, -1);
+                
                 //Invoke 
                 return;
             }
 
             // You didn't pass the level => Out of moves!
-            CanvasManager.Instance.UpdatePanel( ResetLevel , true, 0);
+            
             // Invoke option to reset level
 
         }
+    }
+
+    public void HeartCollected()
+    {
+        tempHeartToCollect++;
     }
 
     #region UI functions
@@ -76,15 +86,11 @@ public class LevelManager : Singleton<LevelManager>
     private void UpdateMoves() => movesText.SetText(tempMaxMoves.ToString());
     private void UpdateHearts() => heartsText.SetText(tempHeartToCollect.ToString());
 
-
-
-    
-
     private void ResetLevel()
     {
         tempMaxMoves = maxMoves;
         tempHeartToCollect = heartToCollect;
-        CanvasManager.Instance.ResetLevel();
+        
         //ResetLevel
 
     }
@@ -95,5 +101,7 @@ public class LevelManager : Singleton<LevelManager>
     }
 
     #endregion
+
+
 
 }

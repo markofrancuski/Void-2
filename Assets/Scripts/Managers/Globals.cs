@@ -24,7 +24,7 @@ public class Globals : Singleton<Globals>
 
     private void Start()
     {
-        Invoke("RetrieveMove", .15f);
+        //Invoke("RetrieveMove", .15f);
     }
 
     public void RetrieveMove()

@@ -51,7 +51,7 @@ public class PlayerController : Person, IDestroyable
 
     private void OnEnable()
     {
-        OnPlayerDieEvent += CanvasManager.Instance.Death;
+       
 
         currentState = PersonState.IDLE;
         SlidePlatform.OnSlidePlatformInteractEvent += AddFirstMove;
@@ -74,7 +74,7 @@ public class PlayerController : Person, IDestroyable
 
     private void OnDisable()
     {
-        OnPlayerDieEvent -= CanvasManager.Instance.Death;
+       
 
         SlidePlatform.OnSlidePlatformInteractEvent -= AddFirstMove;
 

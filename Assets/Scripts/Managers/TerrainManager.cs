@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class TerrainManager : MonoBehaviour
 {
-    public float moveX;
-    public float moveY;
 
     [SerializeField] private List<GameObject> prefabs = new List<GameObject>();
     [SerializeField] private Vector3 currentPosition = Vector3.zero;

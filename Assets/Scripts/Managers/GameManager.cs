@@ -39,7 +39,6 @@ public class GameManager : Singleton<GameManager>
     {
         PlayerController.OnPlayerDieEvent -= OnPlayerDeath;
     }
-
     private void Start()
     {
         //coinValueText.SetText(coinValue.currentValue.ToString());
