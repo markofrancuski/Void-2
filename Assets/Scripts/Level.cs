@@ -9,11 +9,11 @@ public class Level : MonoBehaviour
     private float tempX;
     private float tempY;
 
-    public float moveX;
-    public float moveY;
+    /*public float moveX;
+    public float moveY;*/
 
     private Vector3 nextPos = new Vector3(0, 0, 0);
-    [SerializeField] private float speed;
+    //[SerializeField] private float speed;
     private float disablePoint;
 
     [Header("Level Information")]
@@ -34,11 +34,14 @@ public class Level : MonoBehaviour
             playerGO.transform.position = new Vector3(playerSP.x * Globals.Instance.movePaceHorizontal, playerSP.y * Globals.Instance.movePaceVertical);
         }
 
+        Globals.Instance.levelGO = gameObject;
+        LevelManager.Instance.maxMoves = maxMoves;
+        LevelManager.Instance.heartToCollect = heartsToCollect;
     }
 
-    private void FixedUpdate() 
+    /*private void FixedUpdate() 
     {
-        /* if(TerrainManager.instance.isStarted) 
+         if(TerrainManager.instance.isStarted) 
         {
             nextPos = transform.position + new Vector3(0, movePosY, 0);  
             Tween.Position(transform , transform.position, nextPos, speed, 0 );
@@ -50,16 +53,28 @@ public class Level : MonoBehaviour
                  //Destroy(gameObject);
             }    
         }
-        */
-    }
+        
+    }*/
 
-    public void AddList(List<GameObject> newList)
+    /// <summary>
+    /// This method stores information about level
+    /// </summary>
+    /// <param name="newList"> List of grid spaces</param>
+    /// <param name="hearts"> Number of Hearts to collect in this level </param>
+    /// <param name="moves"> Number of Moves player can have </param>
+    public void SetUpLevel(List<GameObject> newList, int hearts, int moves)
     {
         objects = newList;
+        heartsToCollect = hearts;
+        maxMoves = moves;
+        Debug.Log("REMINDER!!! Add selectable spawn player position ( in Editor x: 0, y: 0) and it will automaticly place player with calcualted position");
     }
 
     public void StartLevel()
-    {     
+    {
+        LevelManager.Instance.maxMoves = maxMoves;
+        LevelManager.Instance.heartToCollect = heartsToCollect;
+
         //Get the sprite width in world space units
         float worldSpriteWidth = objects[0].GetComponent<SpriteRenderer>().sprite.bounds.size.x;
 
@@ -75,8 +90,8 @@ public class Level : MonoBehaviour
         newScale.y = worldScreenHeight / 1 * 0.2f;
         newScale.y = newScale.y - 0.4f;
         //0.2f  = 5 grid space
-        moveX = newScale.x;
-        moveY = newScale.y;
+        //moveX = newScale.x;
+        //moveY = newScale.y;
 
         //Position of the starting grid cell
         float posX = - (newScale.x * 2);
@@ -217,22 +232,24 @@ public class Level : MonoBehaviour
         }
     }
 
-    private void OnDisable() 
+    /*private void OnDisable() 
     {       
         //TerrainManager.instance.spawnedLevels.Remove(gameObject);
         //LevelManager.OnResetLevelEventHandler -= ResetLevel;
+    }*/
+
+    private void OnDestroy()
+    {
+        LevelManager.ResetLevel -= StartLevel;
     }
 
     private void OnEnable()
     {
         //LevelManager.OnResetLevelEventHandler += ResetLevel;
         StartLevel();
-        LevelManager.Instance.maxMoves = maxMoves;
-        LevelManager.Instance.heartToCollect = heartsToCollect;
+        LevelManager.ResetLevel += StartLevel;
+        //LevelManager.Instance.maxMoves = maxMoves;
+        //LevelManager.Instance.heartToCollect = heartsToCollect;
     }
 
-    private void ResetLevel()
-    {
-        StartLevel();
-    }
 }

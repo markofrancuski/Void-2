@@ -11,6 +11,9 @@ public class LevelEditor : EditorWindow
     private GameObject parentObject;
     private GameObject testObject;
 
+    private int numberOfHearts;
+    private int numberOfMoves;
+
     #region Resources
     [Header("Sprites")]
     [SerializeField] private Sprite platformNormalSprite;
@@ -44,7 +47,6 @@ public class LevelEditor : EditorWindow
      private int selectedPlatformIndex;*/
     private PlatformType selectedPlatformType;
     private PickableType selectedPickableType;
-
     #endregion
 
     private Dictionary<int, PlatformInfo> dictionary = new Dictionary<int, PlatformInfo>();
@@ -88,10 +90,11 @@ public class LevelEditor : EditorWindow
         selectedPlatformType = PlatformType.NONE;
         selectedPickableType = PickableType.NONE;
         spaceBetweenPlatforms = new Vector3(1 , 1, 0);
-
+        numberOfHearts = 0;
+        numberOfMoves = 0;
     }
-    [MenuItem("Window/Custom Windows/LevelEditor")]
 
+    [MenuItem("Window/Custom Windows/LevelEditor")]
     public static void ShowWindow()
     {
         GetWindow<LevelEditor>("Level Generator");
@@ -106,6 +109,8 @@ public class LevelEditor : EditorWindow
 
         selectedPlatformType = (PlatformType) EditorGUILayout.EnumPopup("Select Platform Type ", selectedPlatformType);
         selectedPickableType = (PickableType) EditorGUILayout.EnumPopup("Select Pickable Type ", selectedPickableType);
+        numberOfHearts = EditorGUILayout.IntField("Enter number of hearts to collect", numberOfHearts);
+        numberOfMoves = EditorGUILayout.IntField("Enter number of moves", numberOfMoves);
         #endregion
 
         GUI.color = Color.yellow;
@@ -139,7 +144,7 @@ public class LevelEditor : EditorWindow
         GUI.color = Color.white;
 
         //Creates the grid
-        CreateGrid(gridSize, 25, 25, 50, 200, "Level Grid", 25);
+        CreateGrid(gridSize, 25, 25, 50, 250, "Level Grid", 25);
 
         // Shows the drop down menu to select the platform type
         /*if(isPlatformClick)
@@ -346,7 +351,7 @@ public class LevelEditor : EditorWindow
             tempList.Add(gm);
         }
 
-        parentObject.GetComponent<Level>().AddList(tempList);
+        parentObject.GetComponent<Level>().SetUpLevel(tempList, numberOfHearts, numberOfMoves);
         PrefabUtility.SaveAsPrefabAsset(parentObject, saveLevelPath + parentObject.name + ".prefab");
         DestroyImmediate(parentObject);
     }

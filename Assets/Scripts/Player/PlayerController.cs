@@ -38,7 +38,7 @@ public class PlayerController : Person, IDestroyable
 
     }
 
-    private void Update()
+   /* private void Update()
     {
         //if (currentPlayerState == PlayerState.IDLE && !IsFreeFall)
         //{
@@ -47,14 +47,15 @@ public class PlayerController : Person, IDestroyable
         //        IsFreeFall = true;
         //    }
         //}
-    }
+    }*/
 
     private void OnEnable()
     {
        
-
         currentState = PersonState.IDLE;
         SlidePlatform.OnSlidePlatformInteractEvent += AddFirstMove;
+
+        LevelManager.ResetLevel += () => Destroy(gameObject);
 
         InputManager.OnSwipedEvent += AddMove;
         InputManager.OnPlayerStateCheckEvent += GetPlayerState;
@@ -75,8 +76,9 @@ public class PlayerController : Person, IDestroyable
     private void OnDisable()
     {
        
-
         SlidePlatform.OnSlidePlatformInteractEvent -= AddFirstMove;
+
+        LevelManager.ResetLevel -= () => Destroy(gameObject);
 
         InputManager.OnSwipedEvent -= AddMove;
         InputManager.OnPlayerStateCheckEvent -= GetPlayerState;
@@ -93,10 +95,11 @@ public class PlayerController : Person, IDestroyable
         GameManager.ResetSceneEvent -= () => { IsExtraLifeActive.currentValue = true; };
     }
 
-    private void OnBecameInvisible()
+   /* private void OnBecameInvisible()
     {
         //Death();
     }
+    */
 
     private void OnTriggerExit2D(Collider2D collision)
     {

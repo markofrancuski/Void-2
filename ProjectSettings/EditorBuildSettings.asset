@@ -6,15 +6,57 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/Scenes/TestPVPScene.unity
     guid: e8d95a7ad48f3594382b49a5a3c09a94
   - enabled: 1
-    path: Assets/Scenes/SplashScene.unity
+    path: Assets/Scenes/Splash/SplashScene.unity
     guid: 92c96f36955edd045b0bc2c23e62cb60
   - enabled: 1
-    path: Assets/Scenes/MainMenu.unity
+    path: Assets/Scenes/Main/MainMenu.unity
     guid: d7cceb89311d01248a76dabb66ca1cd5
   - enabled: 1
-    path: Assets/Scenes/Level Scene.unity
-    guid: dc6ca993228708f47b109b5eb80313e1
+    path: Assets/Scenes/Chapter_1/Level_1_1.unity
+    guid: 869bc005233ac624e897f98bb856d356
+  - enabled: 1
+    path: Assets/Scenes/Chapter_2/Level_2_1.unity
+    guid: 15c55693229cdae45aed72450bd0d611
+  - enabled: 1
+    path: Assets/Scenes/Chapter_2/Level_2_2.unity
+    guid: 96d0a8326a0162642b9cb704812164f9
+  - enabled: 1
+    path: Assets/Scenes/Chapter_3/Level_3_1.unity
+    guid: bac46a6d1154b4445a19ee0eac3ffb4e
+  - enabled: 1
+    path: Assets/Scenes/Chapter_3/Level_3_2.unity
+    guid: af55c5ddf4a7103489cb85efeb06305a
+  - enabled: 1
+    path: Assets/Scenes/Chapter_3/Level_3_3.unity
+    guid: a56781da3c7a58b40a513a5fa796da5d
+  - enabled: 1
+    path: Assets/Scenes/Chapter_4/Level_4_1.unity
+    guid: 909430466cfa98343bf2f8dc02d62748
+  - enabled: 1
+    path: Assets/Scenes/Chapter_4/Level_4_2.unity
+    guid: 39c777459fba2324c8498a35ece6d9bf
+  - enabled: 1
+    path: Assets/Scenes/Chapter_4/Level_4_3.unity
+    guid: 465d808b506756a4cbd9d70ae0b55980
+  - enabled: 1
+    path: Assets/Scenes/Chapter_4/Level_4_4.unity
+    guid: 08885824c1390d14c8f63ed0a7eb6f9a
+  - enabled: 1
+    path: Assets/Scenes/Chapter_5/Level_5_1.unity
+    guid: 446f1827630add54093611d2ba8cdbdd
+  - enabled: 1
+    path: Assets/Scenes/Chapter_5/Level_5_2.unity
+    guid: 82602251537c1e44ea8b9934b0193946
+  - enabled: 1
+    path: Assets/Scenes/Chapter_5/Level_5_3.unity
+    guid: 9d87525aa97ea244f9b60e799b224c3c
+  - enabled: 1
+    path: Assets/Scenes/Chapter_5/Level_5_4.unity
+    guid: 1840e511c418e2e49bf5f4ccf08a0856
+  - enabled: 1
+    path: Assets/Scenes/Chapter_5/Level_5_5.unity
+    guid: 075b03198ac495f46b858d97fa890f2c
   m_configObjects: {}
