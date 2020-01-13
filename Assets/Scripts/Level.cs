@@ -20,23 +20,32 @@ public class Level : MonoBehaviour
     public int maxMoves;
     public int heartsToCollect;
 
-    public GameObject playerObject;
-    public Vector2 playerSP;
+    public GameObject timObject;
+    public GameObject annieObject;
+    public Vector2 timSP;
+    public Vector2 annieSP;
 
     private void Start() 
     {
-        //Calculates the position Y so that terrain can disable itself when it reaches the position Y
-        disablePoint = -(Camera.main.orthographicSize * 2);
-
-        if (playerObject != null)
-        {
-            GameObject playerGO = Instantiate(playerObject);
-            playerGO.transform.position = new Vector3(playerSP.x * Globals.Instance.movePaceHorizontal, playerSP.y * Globals.Instance.movePaceVertical);
-        }
-
         Globals.Instance.levelGO = gameObject;
         LevelManager.Instance.maxMoves = maxMoves;
         LevelManager.Instance.heartToCollect = heartsToCollect;
+
+        //Calculates the position Y so that terrain can disable itself when it reaches the position Y
+        disablePoint = -(Camera.main.orthographicSize * 2);
+
+        if (timObject != null)
+        {
+            GameObject playerGO = Instantiate(timObject);
+            playerGO.transform.position = new Vector3(timSP.x * Globals.Instance.movePaceHorizontal, timSP.y * Globals.Instance.movePaceVertical);
+        }
+        if (annieObject != null)
+        {
+            GameObject playerGO = Instantiate(annieObject);
+            playerGO.transform.position = new Vector3(annieSP.x * Globals.Instance.movePaceHorizontal, annieSP.y * Globals.Instance.movePaceVertical);
+        }
+
+
     }
 
     /*private void FixedUpdate() 
@@ -67,7 +76,6 @@ public class Level : MonoBehaviour
         objects = newList;
         heartsToCollect = hearts;
         maxMoves = moves;
-        Debug.Log("REMINDER!!! Add selectable spawn player position ( in Editor x: 0, y: 0) and it will automaticly place player with calcualted position");
     }
 
     public void StartLevel()

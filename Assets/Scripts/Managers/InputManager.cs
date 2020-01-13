@@ -12,7 +12,7 @@ public class InputManager : Singleton<InputManager>
     private Vector3 swipeDirection;
     [SerializeField] private float swipeSensitivity;
 
-    [SerializeField] private bool isControllable = false;
+    public bool isControllable = false;
     #endregion
 
     #region SWIPE EVENT

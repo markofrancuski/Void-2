@@ -2219,9 +2219,12 @@ MonoBehaviour:
   - {fileID: 8872299032549870558}
   maxMoves: 20
   heartsToCollect: 5
-  playerObject: {fileID: 3755409253481136197, guid: 94c7a825c88d5db459b6980eb3b23a3b,
+  timObject: {fileID: 3755409253481136197, guid: 94c7a825c88d5db459b6980eb3b23a3b,
     type: 3}
-  playerSP: {x: 0, y: 0}
+  annieObject: {fileID: 3755409253481136197, guid: 2dd68529c04b2ba4ea2ac0c80da2c3a0,
+    type: 3}
+  timSP: {x: 0, y: 1}
+  annieSP: {x: 0, y: 0}
 --- !u!1 &1919347053838873222
 GameObject:
   m_ObjectHideFlags: 0

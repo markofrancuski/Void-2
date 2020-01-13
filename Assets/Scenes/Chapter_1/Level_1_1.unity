@@ -2007,6 +2007,7 @@ MonoBehaviour:
   heartsText: {fileID: 507523092}
   currentChapterText: {fileID: 553687096}
   currentLevelText: {fileID: 1453718504}
+  levelGO: {fileID: 0}
 --- !u!1 &1078265102
 GameObject:
   m_ObjectHideFlags: 0

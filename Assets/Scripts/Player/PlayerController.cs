@@ -134,23 +134,28 @@ public class PlayerController : Person, IDestroyable
     {
         while (true)
         {
+           
             if (movementList.Count != 0 && currentState == PersonState.IDLE && !IsFreeFall)
-            {
-             
-                nextPosition = GetMovement(movementList.First);
+            {              
+                if (InputManager.Instance.isControllable)
+                {
+                    nextPosition = GetMovement(movementList.First);
 
-                if (ValidateBoundary())
-                {
-                    MovePlayer();
-                    //Wait Tween duration
-                    yield return new WaitForSeconds(Globals.Instance.tweenDuration);
+                    if (ValidateBoundary())
+                    {
+                        MovePlayer();
+                        //Wait Tween duration
+                        yield return new WaitForSeconds(Globals.Instance.tweenDuration);
+                    }
+                    else
+                    {
+                        yield return new WaitForSeconds(Globals.Instance.tweenDuration); // or wait one frame 
+                        HandleTweenFinished();
+                    }
                 }
-                else
-                {
-                    yield return new WaitForSeconds(Globals.Instance.tweenDuration); // or wait one frame 
-                    HandleTweenFinished();
-                }
-                              
+                //Cancel the chain movement
+                else movementList.Clear();
+                                           
             }
             yield return new WaitUntil(() => currentState == PersonState.IDLE);
         }

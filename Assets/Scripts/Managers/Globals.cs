@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using Pixelplacement;
 using System.Collections.Generic;
+using MEC;
+using System;
 
 public class Globals : Singleton<Globals>
 {
@@ -56,17 +58,7 @@ public class Globals : Singleton<Globals>
         if (val > currentLevel)
         {
             currentLevel++;
-            Destroy(levelGO);
-            switch(currentChapter)
-            {
-                case 1: Instantiate(chapter1[currentLevel], Vector2.zero, Quaternion.identity); break;
-                case 2: Instantiate(chapter2[currentLevel], Vector2.zero, Quaternion.identity); break;
-                case 3: Instantiate(chapter3[currentLevel], Vector2.zero, Quaternion.identity); break;
-                case 4: Instantiate(chapter4[currentLevel], Vector2.zero, Quaternion.identity); break;
-                case 5: Instantiate(chapter5[currentLevel], Vector2.zero, Quaternion.identity); break;
-
-                default: break;
-            }            
+            Destroy(levelGO);            
         }
         //No more levels in Current Chapter
         else
@@ -81,7 +73,7 @@ public class Globals : Singleton<Globals>
             //No more Chapters
             //End of the game
         }
-
+        SceneSwitcher.Instance.LoadLevel(2f, GetCurrentLevelSceneName());
     }
 
     public void SpawnCurrentLevel()
@@ -96,5 +88,14 @@ public class Globals : Singleton<Globals>
 
             default: break;
         }
+    }
+
+    /// <summary>
+    /// In case you need to reset current level.
+    /// </summary>
+    /// <returns> Returns the name of the current level scene for reloading that scene.</returns>
+    public string GetCurrentLevelSceneName()
+    {
+        return  "Level_" + currentChapter + "_" + currentLevel;
     }
 }

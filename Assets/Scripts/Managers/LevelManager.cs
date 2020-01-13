@@ -32,7 +32,8 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI currentChapterText;
     [SerializeField] private TextMeshProUGUI currentLevelText;
 
-    
+    [SerializeField] private GameObject levelGO;
+
     #region Unity Functions
 
     private void Awake()
@@ -42,17 +43,19 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
+        
         Globals.Instance.SpawnCurrentLevel();
-
-        InputManager.Instance.ControlPlayer();
+        //Instantiate(levelGO, Vector3.zero, Quaternion.identity);
 
         tempMaxMoves = maxMoves;
         tempHeartToCollect = heartToCollect;
 
         currentChapterText.SetText("Chapter:" + Globals.Instance.currentChapter);
         currentLevelText.SetText("Level:" + Globals.Instance.currentLevel);
+
         UpdateMoves();
         UpdateHearts();
+        InputManager.Instance.ControlPlayer();
 
     }
 
@@ -85,19 +88,9 @@ public class LevelManager : MonoBehaviour
         if (tempMaxMoves <= 0)
         {
             InputManager.Instance.UnControlPlayer();
-
-            if (tempHeartToCollect <= 0)
-            {
-                //Fade In
-                //Level Passed
-                
-
-                //Invoke 
-                return;
-            }
-
             // You didn't pass the level => Out of moves!
             Debug.Log("Out of moves, you are Defeated! ");
+            canvasAnimator.SetTrigger("Defeat");
             // Invoke option to reset level
 
         }
@@ -108,8 +101,7 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void HeartCollected()
     {
-        tempHeartToCollect--;
-        UpdateHearts();
+        tempHeartToCollect--;      
         if(tempHeartToCollect <= 0 && tempMaxMoves > 0)
         {
             Debug.Log("Victory! ");
@@ -117,6 +109,7 @@ public class LevelManager : MonoBehaviour
             canvasAnimator.SetTrigger("Victory");
             //Switch to the next level/chapter
         }
+        UpdateHearts();
     }
 
     private void ResetCurrentLevel()
@@ -143,7 +136,9 @@ public class LevelManager : MonoBehaviour
 
     public void OnResetCurrentLevelClicked()
     {
-        ResetLevel?.Invoke();
+        canvasAnimator.SetBool("WaitForLevelSetup", true);
+        SceneSwitcher.Instance.LoadLevel(2f, Globals.Instance.GetCurrentLevelSceneName());
+        //ResetLevel?.Invoke();
     }
 
     private bool isClicked;
@@ -157,6 +152,8 @@ public class LevelManager : MonoBehaviour
 
     public void OnNextLevelClicked()
     {
+        canvasAnimator.SetBool("WaitForLevelSetUp", true);
+        Globals.Instance.GoToNextLevelInChapter();
         //Transition in black
         //Async Load
     }
