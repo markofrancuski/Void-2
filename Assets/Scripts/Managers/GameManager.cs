@@ -30,6 +30,11 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private IntValue coinValue;
     [SerializeField] private TextMeshProUGUI coinValueText;
 
+    private void Awake()
+    {
+        Application.targetFrameRate = 60;
+    }
+
     private void OnEnable()
     {
         PlayerController.OnPlayerDieEvent += OnPlayerDeath;
