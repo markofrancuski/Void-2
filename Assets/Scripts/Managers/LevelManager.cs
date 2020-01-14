@@ -31,8 +31,11 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI heartsText;
     [SerializeField] private TextMeshProUGUI currentChapterText;
     [SerializeField] private TextMeshProUGUI currentLevelText;
+    [SerializeField] private TextMeshProUGUI defeatText;
 
     [SerializeField] private GameObject levelGO;
+
+    public int Players;
 
     #region Unity Functions
 
@@ -55,15 +58,23 @@ public class LevelManager : MonoBehaviour
 
         UpdateMoves();
         UpdateHearts();
-        InputManager.Instance.ControlPlayer();
 
+        //InputManager.Instance.ControlPlayer();
+        Invoke("SceneReady", .2f);
+    }
+
+    void SceneReady()
+    {
+       Globals.Instance.isSceneReady = true;
+       InputManager.Instance.ControlPlayer();
     }
 
     private void OnEnable()
     {
         InputManager.OnSwipedEvent += ReduceMoves;
+        
         ResetLevel += ResetCurrentLevel;
-
+        
         //tempMaxMoves = maxMoves;
         //tempHeartToCollect = heartToCollect;
 
@@ -82,17 +93,13 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void ReduceMoves(string t)
     {
-        Debug.Log("Reduce move is called");
         tempMaxMoves--;
         UpdateMoves();
         if (tempMaxMoves <= 0)
-        {
-            InputManager.Instance.UnControlPlayer();
+        {   
             // You didn't pass the level => Out of moves!
-            Debug.Log("Out of moves, you are Defeated! ");
-            canvasAnimator.SetTrigger("Defeat");
+            ShowDefeatPanel();
             // Invoke option to reset level
-
         }
     }
 
@@ -142,6 +149,9 @@ public class LevelManager : MonoBehaviour
     }
 
     private bool isClicked;
+    /// <summary>
+    /// Loads up the Main Menu Scene
+    /// </summary>
     public void OnBackButtonClicked()
     {
         if (isClicked) return;
@@ -150,14 +160,37 @@ public class LevelManager : MonoBehaviour
         SceneManager.LoadScene(1);
     }
 
+    /// <summary>
+    /// Shows up the animation and loads next level or chapter.
+    /// </summary>
     public void OnNextLevelClicked()
     {
-        canvasAnimator.SetBool("WaitForLevelSetUp", true);
+        canvasAnimator.SetBool("WaitForLevelSetup", true);
         Globals.Instance.GoToNextLevelInChapter();
         //Transition in black
         //Async Load
     }
 
+    /// <summary>
+    /// Shows the defeat panel with provided text displayed
+    /// </summary>
+    public void ShowDefeatPanel(string txt)
+    {
+        InputManager.Instance.UnControlPlayer();
+        defeatText.SetText("Died from " + txt);
+        canvasAnimator.SetTrigger("Defeat");
+    }
+
+    /// <summary>
+    /// Shows the defeat panel with 'Out of the moves' text displayed
+    /// </summary>
+    public void ShowDefeatPanel()
+    {
+        InputManager.Instance.UnControlPlayer();
+        defeatText.SetText("Out of the moves!");
+        canvasAnimator.SetTrigger("Defeat");
+    }
+    
     #endregion
 
 }

@@ -24,17 +24,20 @@ public class InputManager : Singleton<InputManager>
     public delegate PersonState OnPlayerStateCheck();
     public static event OnPlayerStateCheck OnPlayerStateCheckEvent;
 
+    public delegate void OnUnControlPlayer();
+    public static event OnUnControlPlayer OnUnControlPlayerEvent;
+
     #endregion
 
     // Update is called once per frame
     void Update() // Maybe fixedUpdate
     {
         if (!isControllable) return;
-    #if UNITY_EDITOR
-            if (OnPlayerStateCheckEvent.Invoke() != PersonState.DEAD) CheckEditorInput();
-    #else
+#if UNITY_EDITOR
+        if (OnPlayerStateCheckEvent.Invoke() != PersonState.DEAD) CheckEditorInput();
+#else
             if (OnPlayerStateCheckEvent.Invoke() != PersonState.DEAD) CheckTouchInput();
-    #endif
+#endif
     }
 
     public bool isPressed = false;
@@ -47,7 +50,7 @@ public class InputManager : Singleton<InputManager>
 
         if (isPressed)
         {
-            if(Input.GetMouseButtonUp(0))
+            if (Input.GetMouseButtonUp(0))
             {
                 endPos = Input.mousePosition;
 
@@ -62,7 +65,7 @@ public class InputManager : Singleton<InputManager>
         }
         else
         {
-            if(Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0))
             {
                 isPressed = true;
                 startPos = Input.mousePosition;
@@ -110,15 +113,20 @@ public class InputManager : Singleton<InputManager>
             }
         }
     }
- 
+
     void AddMovement(string str)
     {
         // Alert subscribed methods if its not null
         OnSwipedEvent?.Invoke(str);
-        
+
     }
 
     public void ControlPlayer() => isControllable = true;
 
-    public void UnControlPlayer() => isControllable = false;
+    public void UnControlPlayer()
+    {
+        isControllable = false;
+        OnUnControlPlayerEvent?.Invoke();
+    }
+
 }

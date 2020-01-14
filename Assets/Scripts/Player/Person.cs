@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //State Machine
-public enum PersonState { IDLE, MOVING, DEAD, INTERACTING, STUNNED, GROUNDED };
+public enum PersonState { IDLE, MOVING, DEAD, INTERACTING, STUNNED };
 
 public class Person : MonoBehaviour
 {
@@ -100,14 +100,8 @@ public class Person : MonoBehaviour
     // Start is called before the first frame update
     public virtual void Start()
     {
-        Debug.Log($"Person start! {gameObject.name} ");
+        //Debug.Log($"Person start! {gameObject.name} ");
         initialPosition = gameObject.transform.position;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public virtual void OnTriggerEnter2D(Collider2D other)
@@ -125,35 +119,36 @@ public class Person : MonoBehaviour
     }
 
     #endregion
-
-    public virtual void Death()
+    
+    public virtual void Death(string txt)
     {
+        Debug.Log("Death from: " + txt);
         currentState = PersonState.DEAD;
     }
 
-    public virtual void HandleTweenStarted()
+    protected virtual void HandleTweenStarted()
     {
         currentState = PersonState.MOVING;
     }
 
-    public virtual void HandleTweenFinished()
+    protected virtual void HandleTweenFinished()
     {
 
     }
 
-    public virtual void HandleTweenMovingDownStarted()
+    protected virtual void HandleTweenMovingDownStarted()
     {
         IsFreeFall = true;
         boxCollider.enabled = false;
     }
 
-    public virtual void HandleTweenMovingDownFinished()
+    protected virtual void HandleTweenMovingDownFinished()
     {
         boxCollider.enabled = true;
 
     }
 
-    public virtual void Stun()
+    protected virtual void Stun()
     {        
         if(!IsStunned) StartCoroutine(_StunPersonCoroutine());
     }

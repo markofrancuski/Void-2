@@ -31,6 +31,8 @@ public class Globals : Singleton<Globals>
 
     public GameObject levelGO;
 
+    public bool isSceneReady;
+
     private void Start()
     {
         //Hard Code The number of levels in each chapter

@@ -12,11 +12,11 @@ public class BasePlatform : MonoBehaviour, IDestroyable
 
     public virtual void Interact(Person controller)
     {
-        PrintObjectInterating(controller, "Normal");
+        //PrintObjectInteracting(controller, "Normal");
 
         if (controller.IsFreeFall && controller.isDeadFromFall)
         {
-            controller.Death();
+            controller.Death("Height");
         }
         if (controller.currentState != PersonState.STUNNED && controller.currentState != PersonState.DEAD) controller.currentState = PersonState.IDLE;
         controller.IsFreeFall = false;
@@ -24,7 +24,12 @@ public class BasePlatform : MonoBehaviour, IDestroyable
 
     #region UNITY FUNCTIONS
 
-    public void PrintObjectInterating(Person controller, string platformName)
+    /// <summary>
+    /// Prints out the interaction when something touches the platform.
+    /// </summary>
+    /// <param name="controller"> Name of the player(Tim, Annie, AI, PVP Player).</param>
+    /// <param name="platformName"> Name of the platform Player touched. </param>
+    public void PrintObjectInteracting(Person controller, string platformName)
     {
         Debug.Log($"Object: {controller.gameObject.name} is interacting with {platformName} platform!");
     }

@@ -1394,8 +1394,8 @@ MonoBehaviour:
     type: 3}
   annieObject: {fileID: 3755409253481136197, guid: 2dd68529c04b2ba4ea2ac0c80da2c3a0,
     type: 3}
-  timSP: {x: 1, y: 1}
-  annieSP: {x: 0, y: 0}
+  timSP: {x: 0, y: 2}
+  annieSP: {x: 1, y: 2}
 --- !u!1 &1207589040628035587
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,8 +13,8 @@ public class PlayerController : Person, IDestroyable
     public delegate void OnBoundarySet(float x, float y);
     public static event OnBoundarySet onBoundarySet;
 
-    public delegate void OnPlayerDie();
-    public static event OnPlayerDie OnPlayerDieEvent;
+    //public delegate void OnPlayerDie();
+    //public static event OnPlayerDie OnPlayerDieEvent;
 
     #endregion
 
@@ -59,6 +59,7 @@ public class PlayerController : Person, IDestroyable
 
         InputManager.OnSwipedEvent += AddMove;
         InputManager.OnPlayerStateCheckEvent += GetPlayerState;
+        InputManager.OnUnControlPlayerEvent += ClearList;
 
         InteractableManager.OnShieldActiveCheckEvent += () => IsProtected;
         InteractableManager.OnShieldActivateEvent += ActivateShield;
@@ -71,6 +72,7 @@ public class PlayerController : Person, IDestroyable
 
         //Test
         GameManager.ResetSceneEvent += () => { IsExtraLifeActive.currentValue = true; };
+        //OnPlayerDieEvent += LevelManager.Instance.ShowDeathPanel;
     }
 
     private void OnDisable()
@@ -82,6 +84,7 @@ public class PlayerController : Person, IDestroyable
 
         InputManager.OnSwipedEvent -= AddMove;
         InputManager.OnPlayerStateCheckEvent -= GetPlayerState;
+        InputManager.OnUnControlPlayerEvent -= ClearList;
 
         InteractableManager.OnShieldActiveCheckEvent -= () => IsProtected;
         InteractableManager.OnShieldActivateEvent -= ActivateShield;
@@ -93,21 +96,22 @@ public class PlayerController : Person, IDestroyable
         GameManager.ReviveButtonClickedEvent -= OnReviveClick;
         //Test
         GameManager.ResetSceneEvent -= () => { IsExtraLifeActive.currentValue = true; };
+        //OnPlayerDieEvent -= LevelManager.Instance.ShowDeathPanel;
     }
 
-   /* private void OnBecameInvisible()
+    private void OnBecameInvisible()
     {
-        //Death();
+       if (Globals.Instance.isSceneReady) Death("Invisible");
     }
-    */
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if(collision.CompareTag("Boundary"))
+        if (collision.CompareTag("Boundary"))
         {
-            Death();
+            Death("Falling of the world");
         }
     }
+    
     #endregion
 
     #region CHARACTER INTERACTION VARIABLES
@@ -137,8 +141,8 @@ public class PlayerController : Person, IDestroyable
            
             if (movementList.Count != 0 && currentState == PersonState.IDLE && !IsFreeFall)
             {              
-                if (InputManager.Instance.isControllable)
-                {
+                //if (InputManager.Instance.isControllable)
+                //{
                     nextPosition = GetMovement(movementList.First);
 
                     if (ValidateBoundary())
@@ -152,9 +156,9 @@ public class PlayerController : Person, IDestroyable
                         yield return new WaitForSeconds(Globals.Instance.tweenDuration); // or wait one frame 
                         HandleTweenFinished();
                     }
-                }
-                //Cancel the chain movement
-                else movementList.Clear();
+                //}
+                ////Cancel the chain movement
+                //else movementList.Clear();
                                            
             }
             yield return new WaitUntil(() => currentState == PersonState.IDLE);
@@ -232,27 +236,27 @@ public class PlayerController : Person, IDestroyable
         }
     }
 
-    public override void HandleTweenMovingDownStarted()
+    protected override void HandleTweenMovingDownStarted()
     {
         IsFreeFall = true;
         boxCollider.enabled = false;
     }
 
-    public override void HandleTweenMovingDownFinished()
+    protected override void HandleTweenMovingDownFinished()
     {
         boxCollider.enabled = true;
         if (movementList.Count > 0) movementList.RemoveFirst();
         
     }
-    
+
     //Change later the name of the method
-    public override void HandleTweenStarted()
+    protected override void HandleTweenStarted()
     {
         currentState = PersonState.MOVING;
     }
 
     //Called when one move is done
-    public override void HandleTweenFinished()
+    protected override void HandleTweenFinished()
     {
         //Remove The move
         if (movementList.Count > 0) movementList.RemoveFirst();
@@ -329,14 +333,15 @@ public class PlayerController : Person, IDestroyable
         return null;
         
     }
-    
+
+    private void ClearList() => movementList.Clear();
     #endregion
 
     #region INTERFACE IMPLEMENTATION
 
     public void DestroyObject()
     {
-        if(!isProtected) Death();
+        if(!isProtected) Death("DestroyObject");
     }
 
     #endregion
@@ -355,11 +360,13 @@ public class PlayerController : Person, IDestroyable
         isDeadFromFall = false;
     }
     
-    public override void Death()
+    public override void Death(string txt)
     {
-        base.Death();
+        LevelManager.Instance.ShowDefeatPanel(txt);
 
-        OnPlayerDieEvent?.Invoke();
+        base.Death(txt);
+
+        //OnPlayerDieEvent?.Invoke();
 
         if ( !IsExtraLifeActive )
         {

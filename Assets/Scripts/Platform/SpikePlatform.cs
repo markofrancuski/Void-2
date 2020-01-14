@@ -7,7 +7,7 @@ public class SpikePlatform : BasePlatform
 
     public override void Interact(Person controller)
     {
-        PrintObjectInterating(controller, "Spike");
-        controller.Death();
+        //PrintObjectInteracting(controller, "Spike");
+        controller.Death("Spike Platform");
     }
 }

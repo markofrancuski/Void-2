@@ -13,7 +13,7 @@ public class BreakablePlatform : BasePlatform
 
     public override void Interact(Person controller)
     {
-        PrintObjectInterating(controller, "Breakable");
+        //PrintObjectInteracting(controller, "Breakable");
         if (controller.IsFreeFall)
         {
             //controller.AddFirstMove("DOWN");

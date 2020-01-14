@@ -30,21 +30,23 @@ public class Level : MonoBehaviour
         Globals.Instance.levelGO = gameObject;
         LevelManager.Instance.maxMoves = maxMoves;
         LevelManager.Instance.heartToCollect = heartsToCollect;
+        LevelManager.Instance.Players = 0;
 
         //Calculates the position Y so that terrain can disable itself when it reaches the position Y
         disablePoint = -(Camera.main.orthographicSize * 2);
-
+        
         if (timObject != null)
         {
             GameObject playerGO = Instantiate(timObject);
             playerGO.transform.position = new Vector3(timSP.x * Globals.Instance.movePaceHorizontal, timSP.y * Globals.Instance.movePaceVertical);
+            LevelManager.Instance.Players++;
         }
         if (annieObject != null)
         {
             GameObject playerGO = Instantiate(annieObject);
             playerGO.transform.position = new Vector3(annieSP.x * Globals.Instance.movePaceHorizontal, annieSP.y * Globals.Instance.movePaceVertical);
+            LevelManager.Instance.Players++;
         }
-
 
     }
 
@@ -78,6 +80,9 @@ public class Level : MonoBehaviour
         maxMoves = moves;
     }
 
+    /// <summary>
+    /// Calculates the device screen size and scales sprites accordingly
+    /// </summary>
     public void StartLevel()
     {
         LevelManager.Instance.maxMoves = maxMoves;

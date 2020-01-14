@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.IO;
 
 public class LevelEditor : EditorWindow 
 {
-    public static int levelNumber; 
+    public int levelNumber; 
     private int gridSize;
     private string saveLevelPath = "Assets/Prefabs/Level/";
     private Vector3 spaceBetweenPlatforms;
     private GameObject parentObject;
     private GameObject testObject;
 
-    private int numberOfHearts;
+    private int numberOfHearts = 0;
     private int numberOfMoves;
 
     #region Resources
@@ -53,8 +54,9 @@ public class LevelEditor : EditorWindow
 
     private void Awake() 
     {
+        
         Debug.Log("Loading Assets");
-
+        //Debug.LogWarning("LevelEditor.cs Add the number of the level => load all levels from folder and +1 the value so when create new level it continues the level number for prefabs");
         #region Loading Assets
         
         testObject = Resources.Load<GameObject>("Test Sprite");
@@ -87,6 +89,7 @@ public class LevelEditor : EditorWindow
 
         gridSize = 5;
 
+        levelNumber = Directory.GetFiles(@"Assets/Prefabs/Level", "*.prefab").Length + 1;
         selectedPlatformType = PlatformType.NONE;
         selectedPickableType = PickableType.NONE;
         spaceBetweenPlatforms = new Vector3(1 , 1, 0);
@@ -102,16 +105,21 @@ public class LevelEditor : EditorWindow
 
     private void OnGUI() 
     {
+
         #region Input Fields
+        GUILayout.Label($"Next Number of the Level is: { levelNumber }");
         gridSize = EditorGUILayout.IntField("Enter Grid Size" ,gridSize);
         saveLevelPath = EditorGUILayout.TextField("Path To Save Level", saveLevelPath);
         spaceBetweenPlatforms = EditorGUILayout.Vector3Field("Enter the desired space between platforms",  spaceBetweenPlatforms);
 
         selectedPlatformType = (PlatformType) EditorGUILayout.EnumPopup("Select Platform Type ", selectedPlatformType);
         selectedPickableType = (PickableType) EditorGUILayout.EnumPopup("Select Pickable Type ", selectedPickableType);
-        numberOfHearts = EditorGUILayout.IntField("Enter number of hearts to collect", numberOfHearts);
+        CheckHearts();
+        GUILayout.Label($"Hearts To Collect: { numberOfHearts.ToString() }");
         numberOfMoves = EditorGUILayout.IntField("Enter number of moves", numberOfMoves);
         #endregion
+
+        #region Buttons
 
         GUI.color = Color.yellow;
         //Spawn Level Button
@@ -142,6 +150,8 @@ public class LevelEditor : EditorWindow
             dictionary.Clear();
         }
         GUI.color = Color.white;
+
+        #endregion
 
         //Creates the grid
         CreateGrid(gridSize, 25, 25, 50, 250, "Level Grid", 25);
@@ -279,7 +289,6 @@ public class LevelEditor : EditorWindow
     private void SpawnLevel()
     {
 
-        levelNumber++;
         GameObject parentObject = new GameObject();
         parentObject.name = "Level " + levelNumber;
 
@@ -354,6 +363,7 @@ public class LevelEditor : EditorWindow
         parentObject.GetComponent<Level>().SetUpLevel(tempList, numberOfHearts, numberOfMoves);
         PrefabUtility.SaveAsPrefabAsset(parentObject, saveLevelPath + parentObject.name + ".prefab");
         DestroyImmediate(parentObject);
+        levelNumber++;
     }
 
     #region Helper Functions
@@ -468,6 +478,15 @@ public class LevelEditor : EditorWindow
         return defaultTexture;
     }
 
+    private void CheckHearts()
+    {
+        numberOfHearts = 0;
+        foreach(KeyValuePair<int, PlatformInfo> kvp in dictionary)
+        {
+            if (kvp.Value.GetPickableType() == PickableType.HEART) numberOfHearts++;
+        }
+    }
+    
     #endregion
 
 }

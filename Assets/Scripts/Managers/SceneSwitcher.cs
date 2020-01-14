@@ -22,6 +22,7 @@ public class SceneSwitcher : Singleton<SceneSwitcher>
     }
     private IEnumerator<float> _LoadMainMenu(float waitTime, Action SceneLoadedCallback = null)
     {
+        Globals.Instance.isSceneReady = false;
         AsyncOperation operation = SceneManager.LoadSceneAsync(1);
         operation.allowSceneActivation = false;
 
@@ -44,13 +45,15 @@ public class SceneSwitcher : Singleton<SceneSwitcher>
     /// <param name="waitTime">Wait for seconds after finished loading scene. Used for playing some animations, etc...</param>
     /// <param name="sceneName"> Name of the scene to load </param>
     /// <param name="SceneLoadedCallback">Optional parametar to close/open some ui elements or reset some values </param>
-    public void LoadLevel(float waitTime, string sceneName, Action SceneLoadedCallback = null)
+    public void LoadLevel(float waitTime, string sceneName, Action SceneLoadedCallback = null, Action SceneBeforeStartCallback = null)
     {
         Debug.Log($"Switching from: {SceneManager.GetActiveScene().name}" + " to: " + sceneName + " scene");
-        Timing.RunCoroutine(_LoadLevel(waitTime, sceneName, SceneLoadedCallback).CancelWith(gameObject));
+        Timing.RunCoroutine(_LoadLevel(waitTime, sceneName, SceneLoadedCallback, SceneBeforeStartCallback).CancelWith(gameObject));
     }
-    private IEnumerator<float> _LoadLevel(float waitTime, string sceneName, Action SceneLoadedCallback = null)
+    private IEnumerator<float> _LoadLevel(float waitTime, string sceneName, Action SceneLoadedCallback = null, Action SceneBeforeStartCallback = null)
     {
+        Globals.Instance.isSceneReady = false;
+        SceneBeforeStartCallback?.Invoke();
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
         operation.allowSceneActivation = false;
 
@@ -64,8 +67,7 @@ public class SceneSwitcher : Singleton<SceneSwitcher>
         SceneLoadedCallback?.Invoke();
         
         operation.allowSceneActivation = true;
-        Debug.Log($"Switched to the " + sceneName + " scene");
+        //Debug.Log($"Switched to the " + sceneName + " scene");
     }
 
-    
 }

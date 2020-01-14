@@ -10,7 +10,7 @@ public class SlidePlatform : BasePlatform
     int rnd;
     public override void Interact(Person controller)
     {
-        PrintObjectInterating(controller, "Slide");
+        //PrintObjectInteracting(controller, "Slide");
         if (controller.IsFreeFall && distanceFromUpperPlatform +0.4f >= Globals.Instance.movePaceHorizontal)
         {
 

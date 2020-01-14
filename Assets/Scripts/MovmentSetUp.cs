@@ -27,7 +27,7 @@ public class MovmentSetUp : MonoBehaviour
         newScale.y = newScale.y - 0.4f;
 
         //0.2f  = 5 grid space
-        Debug.Log("Move Pace Setup!");
+        //Debug.Log("Move Pace Setup!");
         Globals.Instance.movePaceHorizontal = newScale.x;
         Globals.Instance.movePaceVertical = newScale.y;
               
@@ -58,7 +58,8 @@ public class MovmentSetUp : MonoBehaviour
 
         isClicked = true;
         Globals.Instance.currentLevel = levelNumber;
-        Timing.RunCoroutine(_LoadLevel().CancelWith(this.gameObject));
+        SceneSwitcher.Instance.LoadLevel(2.3f, "Level_" + Globals.Instance.currentChapter + "_" + Globals.Instance.currentLevel, null, ()=> { canvasAnimatior.SetBool("Load", true); });
+        //Timing.RunCoroutine(_LoadLevel().CancelWith(this.gameObject));
         //Play the switching animation and load the scene async
     }
 

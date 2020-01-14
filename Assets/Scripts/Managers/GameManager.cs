@@ -37,12 +37,12 @@ public class GameManager : Singleton<GameManager>
 
     private void OnEnable()
     {
-        PlayerController.OnPlayerDieEvent += OnPlayerDeath;
+        //PlayerController.OnPlayerDieEvent += OnPlayerDeath;
 
     }
     private void OnDisable()
     {
-        PlayerController.OnPlayerDieEvent -= OnPlayerDeath;
+        //PlayerController.OnPlayerDieEvent -= OnPlayerDeath;
     }
     private void Start()
     {
