@@ -108,6 +108,7 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void HeartCollected()
     {
+        Debug.Log("Heart Collected!");
         tempHeartToCollect--;      
         if(tempHeartToCollect <= 0 && tempMaxMoves > 0)
         {

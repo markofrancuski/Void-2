@@ -113,7 +113,8 @@ public class InteractableManager : Singleton<InteractableManager>
 
                     for (int i = 0; i < 4; i++)
                     {
-                        stunGO.transform.GetChild(i).GetComponent<Projectile>().SetUpProjectile(tempTeam);
+                        Debug.LogWarning("Dodat argument Vector2.zero");
+                        stunGO.transform.GetChild(i).GetComponent<Projectile>().SetUpProjectile(tempTeam, Vector2.zero);
                     }
                     stunGO.SetActive(true);
 

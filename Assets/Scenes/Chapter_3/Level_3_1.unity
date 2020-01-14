@@ -2064,7 +2064,7 @@ MonoBehaviour:
   heartsText: {fileID: 507523092}
   currentChapterText: {fileID: 553687096}
   currentLevelText: {fileID: 1453718504}
-  defeatText: {fileID: 0}
+  defeatText: {fileID: 815321598}
   levelGO: {fileID: 0}
   Players: 0
 --- !u!1 &1078265102

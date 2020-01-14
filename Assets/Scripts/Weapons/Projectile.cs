@@ -11,19 +11,21 @@ public class Projectile : MonoBehaviour
 
     public int Team;
 
-    public void SetUpProjectile(int team)
+    public void SetUpProjectile(int team, Vector2 dir)
     {
         Team = team;
+        direction = dir;
     }
 
     private void FixedUpdate()
     {
+        
         rigidBody.velocity = direction * speed * Time.deltaTime;
 
     }
 
     private void OnBecameInvisible()
     {
-        gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 }

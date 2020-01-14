@@ -243,6 +243,9 @@ public class Level : MonoBehaviour
                 tempX += newScale.x;          
             }
         }
+
+        //Set up enemies
+
     }
 
     /*private void OnDisable() 

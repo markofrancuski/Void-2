@@ -106,15 +106,16 @@ public class Person : MonoBehaviour
 
     public virtual void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Projectile"))
+        if (other.CompareTag("Projectile") && InputManager.Instance.isControllable)
         {
-            int team = other.GetComponent<Projectile>().Team;
-            if (team != Team)
-            {
-                Debug.Log($"GO from team: {team} has stunned GO from team: {Team}");
-                Stun();
-            } 
-            else  Debug.Log($"Cannot stun yourself!");
+            Death("Projectile");
+            //int team = other.GetComponent<Projectile>().Team;
+            //if (team != Team)
+            //{
+            //    Debug.Log($"GO from team: {team} has stunned GO from team: {Team}");
+            //    Stun();
+            //} 
+            //else  Debug.Log($"Cannot stun yourself!");
         }
     }
 
